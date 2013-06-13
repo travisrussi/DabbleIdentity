@@ -1,0 +1,25 @@
+﻿@model  Thinktecture.IdentityServer.Web.ViewModels.EmailChangeModel
+@{
+    ViewBag.Title = "Password Reset";
+}
+
+<div class="span4 offset4 middle-aligned">
+        @using (Html.BeginForm("Forget", "Account", FormMethod.Post, new { @class = "well pop primary hinted validate clearfix" }))
+        {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("Password Reset failed. Please correct the errors and try again.", new { @class = "alert alert-error" })
+        <div class="controls-row">
+			<label class="control-label">New E-mail address</label>
+			<div class="input-prepend full-width">
+				<span class="add-on left"><i class="icon-user"></i></span>
+                @Html.EditorFor(m => m.UserName,
+                    new { @placeholder = Html.DisplayNameFor(m => m.UserName), @pattern = "^.{5}.+$",  @class="error", @readonly="true" })
+            </div>
+        </div>
+		<button type="submit" class="pull-right submitbutton send">Save</button>
+        }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -5,17 +5,17 @@
     ViewBag.Title = Create_cshtml.CreateUser;
 }
 
-@using (Html.BeginForm("Create", "User"))
+@using (Html.BeginForm("Create", "User", FormMethod.Post, new { @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(Create_cshtml.ErrorCreatingUser)
-
+    @Html.ValidationSummary(Create_cshtml.ErrorCreatingUser, new { @class = "alert alert-error" })
+    
     <fieldset class="editor small">
-        <legend>@ViewBag.Title</legend>
+        <legend>Create User</legend>
 
         @Html.EditorForModel()
 
-        <div>
+        <div class="control-group">
             <label>@Create_cshtml.Roles</label>
             <div class="inline-editor create-user-roles">
                 @for (int i = 0; i < Model.Roles.Length; i++)
@@ -29,9 +29,11 @@
             </div>
         </div>
 
-        <div class="buttons">
-            <button type="submit">@Create_cshtml.Create</button>
-            <button type="reset">@Create_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-large btn-primary">@Create_cshtml.Create</button>
+                <button type="reset" class="btn btn-large">@Create_cshtml.Cancel</button>
+            </div>
         </div>
     </fieldset>
 }

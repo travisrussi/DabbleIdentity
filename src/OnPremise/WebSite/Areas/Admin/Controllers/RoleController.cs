@@ -46,7 +46,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
         {
             return View("Create", new RoleInputModel());
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(RoleInputModel model)
@@ -77,16 +77,16 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var query = from item in list
                         where item.Delete && !(item.CanDelete)
                         select item.Name;
-            foreach(var name in query)
+            foreach (var name in query)
             {
                 ModelState.AddModelError("", string.Format(Resources.RoleController.CannotDeleteRole, name));
             }
-            
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    foreach (var item in list.Where(x=>x.Delete && x.CanDelete).Select(x=>x.Name))
+                    foreach (var item in list.Where(x => x.Delete && x.CanDelete).Select(x => x.Name))
                     {
                         UserManagementRepository.DeleteRole(item);
                     }
@@ -102,7 +102,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", Resources.RoleController.ErrorDeletingRole);
                 }
             }
-            
+
             var vm = new RolesViewModel(UserManagementRepository);
             return View("Index", vm);
         }

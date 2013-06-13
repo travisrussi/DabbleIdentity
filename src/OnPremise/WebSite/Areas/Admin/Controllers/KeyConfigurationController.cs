@@ -29,7 +29,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var vm = new KeyConfigurationViewModel(keys);
             return View(vm);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(KeyConfigurationInputModel keys)

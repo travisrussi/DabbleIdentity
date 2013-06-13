@@ -1,3 +1,5 @@
+//ignore jslint start
+
 // Knockout JavaScript library v2.1.0
 // (c) Steven Sanderson - http://knockoutjs.com/
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -3441,3 +3443,5 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 })();
 });
 })(window,document,navigator);
+
+//ignore jslint end

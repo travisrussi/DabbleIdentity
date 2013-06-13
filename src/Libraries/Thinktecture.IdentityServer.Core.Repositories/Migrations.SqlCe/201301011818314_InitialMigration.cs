@@ -1,5 +1,6 @@
 namespace Thinktecture.IdentityServer.Core.Repositories.Migrations.SqlCe
 {
+    using System;
     using System.Data.Entity.Migrations;
     
     public partial class InitialMigration : DbMigration

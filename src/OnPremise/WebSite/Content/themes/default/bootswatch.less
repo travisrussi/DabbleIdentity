@@ -1,0 +1,135 @@
+﻿body {
+	padding-top: @navbarHeight + 70; /* to make the container go all the way to the bottom of the topbar */
+	padding-bottom: 40px;
+}
+.validation-summary-valid {
+    display: none;
+}
+
+input[disabled]{
+	background: #80a0d3;
+	border-color: #647ca7;
+}
+select.error,
+input.error{
+	background: #ffc3c5;
+}
+select.valid,
+input.valid{
+	background: #cfe594;
+}
+input:invalid,
+input:valid{
+	border-color: #CCC;
+}
+.icon-extra{	background-position:	-121px	-167px;}
+.icon-region{	background-position:	-143px	-167px;}
+.icon-hex{		background-position:	-166px	-168px;}
+.icon-office{	background-position:	-72px	-167px;}
+.icon-phone{	background-position:	-97px	-167px;}
+.icon-remove{	background-position:	-48px	-166px;}
+
+.icon-gender{	background-position:		0	-165px;}
+.hint_box {
+	position: absolute;
+	.box-sizing(border-box);
+	display: block;
+	z-index: 1000;
+	max-width: 190px;
+	min-width: 120px;
+	left: 100%;
+	top: 0;
+	background: @grayLight;
+	border: 1px solid @black;
+	.border-radius(3px);
+	padding: 6px;
+	margin-top: -11px;
+	margin-left: -3px;
+	font-size: 12px;
+    color: @white;
+	zoom: 1;
+
+	.full-width &{
+		margin-left: 13px;
+	}
+}
+.hint_box:after, .hint_box:before {
+	right: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.hint_box:after {
+	border-color: rgba(158, 201, 63, 0);
+	border-right-color: @grayLight;
+	border-width: 15px;
+	top: 50%;
+	margin-top: -15px;
+}
+.hint_box:before {
+	border-color: rgba(255, 255, 255, 0);
+	border-right-color: @black;
+	border-width: 16px;
+	top: 50%;
+	margin-top: -16px;
+}
+
+@media (max-width: 979px)
+{
+	body {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+}
+
+a h1,
+h1 a,
+a h2,
+h2 a,
+a h3,
+h3 a {
+	color: @grayDark;
+}
+.row-fluid{
+	.input-prepend{
+		position:relative;
+		padding-right:20px;
+
+		input,
+		select{
+			width:100%;
+			padding-left:25px;
+			display:block;
+			height: @baseLineHeight + 8;
+			.box-sizing(border-box);
+			.border-radius(@inputBorderRadius);
+		}
+		.add-on{
+			position:absolute;
+			z-index: 3;
+			top:1px;
+			background:none;
+			border:0 none;
+		}
+		.add-on.left{
+			left:2px;
+		}
+		.add-on.right{
+			right:-5px;
+			&.inner{
+				right:2px;
+			}
+		}
+
+		&[class*="span"]{
+			padding-right:0;
+		}
+		&.full-width{
+			padding-right: 0;
+		}
+	}
+}

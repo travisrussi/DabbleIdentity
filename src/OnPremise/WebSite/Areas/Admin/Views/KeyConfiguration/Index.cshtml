@@ -6,37 +6,47 @@
     ViewBag.Title = Index_cshtml.KeyConfiguration;
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("index", "KeyConfiguration", FormMethod.Post, new { @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken();
-    @Html.ValidationSummary(Index_cshtml.ErrorUpdatingKeys)
+    @Html.ValidationSummary(Index_cshtml.ErrorUpdatingKeys, new { @class = "alert alert-error" })
 
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
 
-        <div>
-            @Html.LabelFor(x=>x.Keys.SigningCertificate)
-            @Html.DropDownListFor(x=>x.Keys.SigningCertificate, Model.AvailableSigningCerts)
-            @Html.ValidatorFor(x=>x.Keys.SigningCertificate)
+        <div class="control-group">
+            @Html.LabelFor(x=>x.Keys.SigningCertificate, new { @class = "control-label" })
+            <div class="controls">
+                @Html.DropDownListFor(x=>x.Keys.SigningCertificate, Model.AvailableSigningCerts)
+                @Html.ValidatorFor(x=>x.Keys.SigningCertificate)
+            </div>
         </div>
-        <div>
-            @Html.LabelFor(x=>x.SigningCertificateThumbprint)
-            @Model.SigningCertificateThumbprint
+        <div class="control-group">
+            @Html.LabelFor(x=>x.SigningCertificateThumbprint, new { @class = "control-label" })
+            <div class="controls">
+                @Model.SigningCertificateThumbprint
+            </div>
         </div>
-        <div>
-            @Html.LabelFor(x=>x.Keys.DecryptionCertificate)
-            @Html.DropDownListFor(x=>x.Keys.DecryptionCertificate, Model.AvailableDecryptionCerts)
-            @Html.ValidatorFor(x=>x.Keys.DecryptionCertificate)
+        <div class="control-group">
+            @Html.LabelFor(x=>x.Keys.DecryptionCertificate, new { @class = "control-label" })
+            <div class="controls">
+                @Html.DropDownListFor(x=>x.Keys.DecryptionCertificate, Model.AvailableDecryptionCerts)
+                @Html.ValidatorFor(x=>x.Keys.DecryptionCertificate)
+            </div>
         </div>
-        <div>
-            @Html.LabelFor(x=>x.Keys.SymmetricSigningKey)
-            @Html.EditorFor(x=>x.Keys.SymmetricSigningKey)
-            @Html.ValidatorFor(x=>x.Keys.SymmetricSigningKey)
+        <div class="control-group">
+            @Html.LabelFor(x=>x.Keys.SymmetricSigningKey, new { @class = "control-label" })
+            <div class="controls">
+                @Html.EditorFor(x=>x.Keys.SymmetricSigningKey)
+                @Html.ValidatorFor(x=>x.Keys.SymmetricSigningKey)
+            </div>
         </div>
 
-        <div class="buttons">
-            <button type="submit">@Index_cshtml.Update</button>
-            <button type="reset">@Index_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-large btn-primary">@Index_cshtml.Update</button>
+                <button type="reset" class="btn btn-large ">@Index_cshtml.Cancel</button>
+            </div>
         </div>
     </fieldset>
 }

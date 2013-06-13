@@ -3,8 +3,6 @@ obj/
 packages/
 build/
 
-!NuGet.exe
-
 *.suo
 *.csproj.user
 *.pubxml.user
@@ -14,5 +12,3 @@ build/
 _ReSharper.*
 *.resharper
 PublishProfiles
-*.DS_Store
-*.DotSettings.user

@@ -31,10 +31,12 @@ namespace Thinktecture.IdentityServer
         public Uri OAuth2Authorize { get; set; }
         public Uri JSNotify { get; set; }
 
+        //TODO make sure that the new oauth2callback works
         public static class Paths
         {
             public const string WSFedIssuePage = "issue/wsfed";
             public const string WSFedHRD = "issue/hrd";
+            public const string OAuth2Callback = "issue/hrd/oauth2callback";
             public const string WSFedHRDSelect = "issue/hrd/select";
             public const string WSFedMetadata = "FederationMetadata/2007-06/FederationMetadata.xml";
             public const string PrivacyNotice = "privacyNotice.txt";
@@ -42,7 +44,6 @@ namespace Thinktecture.IdentityServer
             public const string SimpleHttp = "issue/simple";
             public const string Wrap = "issue/wrap";
             public const string OAuth2Token = "issue/oauth2/token";
-            public const string OAuth2Callback = "issue/oauth2/callback";
             public const string OAuth2Authorize = "issue/oauth2/authorize";
             public const string AdfsIntegration = "issue/adfs";
             public const string JSNotify = "issue/jsnotify";
@@ -74,7 +75,7 @@ namespace Thinktecture.IdentityServer
             {
                 baseUriString += "/";
             }
-            
+
             // construct various http and https URIs
             var passive = new Uri(baseUriString + Paths.WSFedIssuePage);
             var builder = new UriBuilder(passive);
@@ -112,13 +113,13 @@ namespace Thinktecture.IdentityServer
             builder.Scheme = Uri.UriSchemeHttps;
             builder.Port = httpsPort;
             ep.OAuth2Token = builder.Uri;
-            
+
             var oauth2callback = new Uri(baseUriString + Paths.OAuth2Callback);
             builder = new UriBuilder(oauth2callback);
             builder.Scheme = Uri.UriSchemeHttps;
             builder.Port = httpsPort;
             ep.OAuth2Callback = builder.Uri;
-            
+
             var oauth2auth = new Uri(baseUriString + Paths.OAuth2Authorize);
             builder = new UriBuilder(oauth2auth);
             builder.Scheme = Uri.UriSchemeHttps;
@@ -136,7 +137,7 @@ namespace Thinktecture.IdentityServer
             builder.Scheme = Uri.UriSchemeHttps;
             builder.Port = httpsPort;
             ep.WSFederationMetadata = builder.Uri;
-            
+
             var adfs = new Uri(baseUriString + Paths.AdfsIntegration);
             builder = new UriBuilder(adfs);
             builder.Scheme = Uri.UriSchemeHttps;

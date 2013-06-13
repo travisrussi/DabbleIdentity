@@ -1,8 +1,8 @@
 ﻿@using Thinktecture.IdentityServer.Web.Areas.Admin.App_LocalResources.Menu
 @model MenuViewModel
 
-<h1>@Index_cshtml.Configuration</h1>
-<ul>
+<legend>@Index_cshtml.Configuration</legend>
+<ul class="nav nav-pills nav-stacked">
     <li>@Html.ActionLink(Index_cshtml.GeneralConfiguration, "Index", "General")</li>
     <li>@Html.ActionLink(Index_cshtml.KeyConfiguration, "Index", "KeyConfiguration")</li>
     <li>
@@ -12,15 +12,18 @@
     <li>@Html.ActionLink(Index_cshtml.Diagnostics, "Index", "Diagnostics")</li>
     <li>@Html.ActionLink(Index_cshtml.ApplicationRecycle, "Recycle", "General")</li>
 </ul>
-<ul>
+<ul class="nav nav-pills nav-stacked">
     <li>
         @Html.ActionLink(Index_cshtml.RelyingPartiesResources, "Index", "RP")
         @Html.Action("ChildMenu", "Menu", new{controllerName="RP"})
     </li>
-    <li>
-        @Html.ActionLink(Index_cshtml.IdentityProviders, "Index", "IP")
-        @Html.Action("ChildMenu", "Menu", new{controllerName="IP"})
-    </li>
+    @if(Model.ShowIdentityProviders)
+    {
+        <li>
+            @Html.ActionLink(Index_cshtml.IdentityProviders, "Index", "IP")
+            @Html.Action("ChildMenu", "Menu", new{controllerName="IP"})
+        </li>
+    }
     @if(Model.ShowOAuthClients)
     {
         <li>
@@ -35,9 +38,15 @@
         }
     }
 </ul>
-<ul>
+<ul class="nav nav-pills nav-stacked">
     <li>@Html.ActionLink(Index_cshtml.Roles, "Index", "Role")</li>
     <li>@Html.ActionLink(Index_cshtml.Users, "Index", "User")</li>
-    <li>@Html.ActionLink(Index_cshtml.ClientCertificates, "Index", "ClientCertificate")</li>
-    <li>@Html.ActionLink(Index_cshtml.IdentityDelegation, "Index", "Delegation")</li>
+    @if(Model.ShowClientCerts)
+    {
+        <li>@Html.ActionLink(Index_cshtml.ClientCertificates, "Index", "ClientCertificate")</li>
+    }
+    @if(Model.ShowIdentityDelegation)
+    {
+        <li>@Html.ActionLink(Index_cshtml.IdentityDelegation, "Index", "Delegation")</li>
+    }
 </ul>

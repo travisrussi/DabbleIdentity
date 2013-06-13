@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Migrations;
 
 namespace Thinktecture.IdentityServer.Repositories.Sql
 {
@@ -20,11 +21,28 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
 
         public string WSFederationEndpoint { get; set; }
         public string IssuerThumbprint { get; set; }
-        
+
         public string ClientID { get; set; }
         public string ClientSecret { get; set; }
+        public string Scope { get; set; }
         public int? OAuth2ProviderType { get; set; }
+        public int? OpenIdProviderType { get; set; }
 
         public bool Enabled { get; set; }
+    }
+
+    public partial class AddOpenIdProviderType : DbMigration
+    {
+        public override void Up()
+        {
+            AddColumn("IdentityProvider", "OpenIdProviderType", c => c.Int());
+        }
+
+        public override void Down()
+        {
+            DropColumn("IdentityProvider", "OpenIdProviderType");
+
+        }
+
     }
 }

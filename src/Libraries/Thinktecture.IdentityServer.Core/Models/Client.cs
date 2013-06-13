@@ -14,19 +14,19 @@ namespace Thinktecture.IdentityServer.Models
         [UIHint("HiddenInput")]
         public int ID { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "Name", Description = "NameDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "Name", Description = "NameDescription")]
         [Required]
         public string Name { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "Description", Description = "DescriptionDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "Description", Description = "DescriptionDescription")]
         [Required]
         public string Description { get; set; }
-        
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "ClientId", Description = "ClientIdDescription")]
+
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "ClientId", Description = "ClientIdDescription")]
         [Required]
         public string ClientId { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "ClientSecret", Description = "ClientSecretDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "ClientSecret", Description = "ClientSecretDescription")]
         [UIHint("SymmetricKey")]
         public string ClientSecret { get; set; }
 
@@ -34,23 +34,23 @@ namespace Thinktecture.IdentityServer.Models
         public bool HasClientSecret { get; set; }
 
         [AbsoluteUri]
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "RedirectUri", Description = "RedirectUriDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "RedirectUri", Description = "RedirectUriDescription")]
         public Uri RedirectUri { get; set; }
 
         //[Display(Name = "Native Client", Description = "Native Client.")]
         //[UIHint("HiddenInput")]
         //public bool NativeClient { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "AllowImplicitFlow", Description = "AllowImplicitFlowDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "AllowImplicitFlow", Description = "AllowImplicitFlowDescription")]
         public bool AllowImplicitFlow { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "AllowResourceOwnerFlow", Description = "AllowResourceOwnerFlowDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "AllowResourceOwnerFlow", Description = "AllowResourceOwnerFlowDescription")]
         public bool AllowResourceOwnerFlow { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "AllowCodeFlow", Description = "AllowCodeFlowDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "AllowCodeFlow", Description = "AllowCodeFlowDescription")]
         public bool AllowCodeFlow { get; set; }
 
-        [Display(ResourceType = typeof (Resources.Models.Client), Name = "AllowRefreshToken", Description = "AllowRefreshTokenDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Client), Name = "AllowRefreshToken", Description = "AllowRefreshTokenDescription")]
         public bool AllowRefreshToken { get; set; }
 
         public System.Collections.Generic.IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -1,18 +1,22 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<nav class="config-menu">
+<div class="span2">
+     <div class="well secondary middle-aligned">
     @Html.Action("Index", "Menu")
-</nav>
-
-<section class="config-editor">
+     </div>
+</div>
+  <script src="/Scripts/jquery-1.8.2.js"></script>
+<div class="span10">
+   <div class="well primary middle-aligned">
     @if (TempData["Message"] != null)
     {
-        <div class="message">@TempData["Message"]</div>
+        <div class="alert alert-info">@TempData["Message"]</div>
     }
     @RenderBody()
-</section>
+   </div>
+</div>
+
 
 @section styles
 {
@@ -25,4 +29,14 @@
     </script>
     <script src="~/Areas/Admin/Scripts/Admin.js"></script>
     @RenderSection("scripts", false)
+
+    <script>
+        $(document).ready(function () {
+            $('a').each(function (i) {
+                if (document.URL.indexOf($(this).attr('href')) != -1) {
+                    $(this).parent().addClass('active');
+                }
+            });
+        });
+    </script>
 }

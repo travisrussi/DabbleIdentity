@@ -8,7 +8,6 @@ using System.Security.Principal;
 using System.Web.Mvc;
 using Thinktecture.IdentityModel;
 using Thinktecture.IdentityServer.Models.Configuration;
-using Thinktecture.IdentityServer.Web.Areas.Admin.Resources;
 
 namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
 {
@@ -92,7 +91,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                     errors.Add(new ValidationResult(Resources.KeyConfigurationViewModel.InvalidSymmetricKeyLength, new string[] { "SymmetricSigningKey" }));
                 }
             }
-            catch(FormatException ex)
+            catch (FormatException ex)
             {
                 errors.Add(new ValidationResult(ex.Message, new string[] { "SymmetricSigningKey" }));
             }
@@ -121,7 +120,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
         }
 
         public KeyConfigurationInputModel Keys { get; set; }
-        [Display(ResourceType = typeof (Resources.KeyConfigurationViewModel), Name = "SigningThumbprint")]
+        [Display(ResourceType = typeof(Resources.KeyConfigurationViewModel), Name = "SigningThumbprint")]
         public string SigningCertificateThumbprint { get; set; }
 
         public KeyConfigurationViewModel(Models.Configuration.KeyMaterialConfiguration config)
@@ -151,7 +150,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
             {
                 store.Close();
             }
-            
+
             return list;
         }
     }

@@ -64,7 +64,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", Resources.OAuthClientController.ErrorDeletingClients);
                 }
             }
-            
+
             return Index();
         }
 
@@ -81,7 +81,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 client = new Client();
             }
 
-            var vm = new OAuthClientViewModel(client); 
+            var vm = new OAuthClientViewModel(client);
             return View("Edit", vm);
         }
 

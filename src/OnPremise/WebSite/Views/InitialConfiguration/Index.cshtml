@@ -5,13 +5,14 @@
     ViewBag.Title = Index_cshtml.InitialConfiguration;
 }
 
+
 <h2>@ViewBag.Title
     <a href="@Url.Content("~/docs/initialConfiguration.html")" target="_blank">@Index_cshtml.Help</a>
 </h2>
 
-
 @using (Html.BeginForm())
 {
+    <div class="span6 middle-aligned well secondary">
     @Html.ValidationSummary(true)
 
     <fieldset class="editor">
@@ -56,4 +57,6 @@
     <div class="buttons"> 
         <input type="submit" value="@Index_cshtml.Save" />
     </div>
+         </div>
 }
+   

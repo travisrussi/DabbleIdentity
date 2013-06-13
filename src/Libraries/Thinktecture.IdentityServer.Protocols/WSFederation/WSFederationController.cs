@@ -11,12 +11,14 @@ using System.Web.Mvc;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using Thinktecture.IdentityServer.Repositories;
 using Thinktecture.IdentityServer.TokenService;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols.WSFederation
 {
     [ClaimsAuthorize(Constants.Actions.Issue, Constants.Resources.WSFederation)]
     public class WSFederationController : Controller
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         const string _cookieName = "wsfedsignout";
 
         [Import]
@@ -34,7 +36,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
 
         public ActionResult Issue()
         {
-            Tracing.Verbose("WS-Federation endpoint called.");
+            logger.Info("WS-Federation endpoint called.");
 
             if (!ConfigurationRepository.WSFederation.Enabled && ConfigurationRepository.WSFederation.EnableAuthentication)
             {

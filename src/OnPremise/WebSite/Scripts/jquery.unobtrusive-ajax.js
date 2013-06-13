@@ -1,4 +1,6 @@
-﻿/*!
+﻿//ignore jslint start
+
+/*!
 ** Unobtrusive Ajax support library for jQuery
 ** Copyright (C) Microsoft Corporation. All rights reserved.
 */
@@ -160,4 +162,6 @@
             data: clickInfo.concat($(this).serializeArray())
         });
     });
-}(jQuery));
+}( jQuery ) );
+
+//ignore jslint end

@@ -4,7 +4,7 @@
 @{
     if (Model.IsNew)
     {
-        ViewBag.Title = Configure_cshtml.NewClientCertificates;
+        ViewBag.Title = Configure_cshtml.NewClientCertificates;    
     }
     else
     {
@@ -12,69 +12,84 @@
     }
 }
 
-
-@Html.ValidationSummary(Configure_cshtml.ErrorWithClientCertificates)
+@Html.ValidationSummary(Configure_cshtml.ErrorWithClientCertificates, new { @class = "alert alert-error" })
 
 <fieldset class="editor">
     <legend>@ViewBag.Title</legend>
     
-    @using (Html.BeginForm("Add", "ClientCertificate", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("Add", "ClientCertificate", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
     {
         @Html.AntiForgeryToken()
         
         if (Model.IsNew)
         {
-            <div>
-                @Html.LabelFor(x => Model.NewCertificate.UserName)
-                @Html.DropDownListFor(x => Model.NewCertificate.UserName, Model.AllUserNames)
-                @Html.ValidatorFor(x => Model.NewCertificate.UserName)
+            <div class="control-group">
+                @Html.LabelFor(x => Model.NewCertificate.UserName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.DropDownListFor(x => Model.NewCertificate.UserName, Model.AllUserNames)
+                    @Html.ValidatorFor(x => Model.NewCertificate.UserName)
+                </div>
             </div>
         }
         else
         {
-            <div>
-                @Html.HiddenFor(x => Model.NewCertificate.UserName)
-                @Html.LabelFor(x => Model.NewCertificate.UserName)
-                @Html.DisplayFor(x => Model.NewCertificate.UserName)
+            <div class="control-group">
+                @Html.LabelFor(x => Model.NewCertificate.UserName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.HiddenFor(x => Model.NewCertificate.UserName)
+                    @Html.DisplayFor(x => Model.NewCertificate.UserName)
+                </div>
             </div>
         }
         
-        <div>
-            @Html.LabelFor(x => Model.NewCertificate.Description)
-            @Html.EditorFor(x => Model.NewCertificate.Description)
-            @Html.ValidatorFor(x=>Model.NewCertificate.Description)
+        <div class="control-group">
+            @Html.LabelFor(x => Model.NewCertificate.Description, new { @class = "control-label" })
+            <div class="controls">
+                @Html.EditorFor(x => Model.NewCertificate.Description)
+                @Html.ValidatorFor(x => Model.NewCertificate.Description)
+            </div>
         </div>
-        <div>
-            @Html.LabelFor(x => Model.NewCertificate.Thumbprint)
-            @Html.EditorFor(x => Model.NewCertificate.Thumbprint)
-            @Html.ValidatorFor(x=>Model.NewCertificate.Thumbprint)
+        <div class="control-group">
+            @Html.LabelFor(x => Model.NewCertificate.Thumbprint, new { @class = "control-label" })
+            <div class="controls">
+                @Html.EditorFor(x => Model.NewCertificate.Thumbprint)
+                @Html.ValidatorFor(x => Model.NewCertificate.Thumbprint)
+            </div>
         </div>
         
-        <div class="buttons">
-            <button type="submit">@Configure_cshtml.AddCertificate</button>
-            <button type="reset">@Configure_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn btn-large btn-primary">@Configure_cshtml.AddCertificate</button>
+                <button type="reset" class="btn btn-large">@Configure_cshtml.Cancel</button>
+            </div>
         </div>
     }
     <hr />
 
     @foreach (var model in Model.Certificates)
     {
-        using (Html.BeginForm("Remove", "ClientCertificate"))
+        using (Html.BeginForm("Remove", "ClientCertificate", FormMethod.Post, new { @class = "form-horizontal" }))
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(x => model.UserName)
-            <div class="edit-prop">
-                @Html.LabelFor(x => model.Description)
-                @Html.DisplayFor(x => model.Description)
-                @Html.HiddenFor(x => model.Description)
+            <div class="control-group">
+                @Html.LabelFor(x => model.Description, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.DisplayFor(x => model.Description)
+                    @Html.HiddenFor(x => model.Description)
+                </div>
             </div>
-            <div class="edit-prop">
-                @Html.LabelFor(x => model.Thumbprint)
-                @Html.DisplayFor(x => model.Thumbprint)
-                @Html.HiddenFor(x => model.Thumbprint)
+            <div class="control-group">
+                @Html.LabelFor(x => model.Thumbprint, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.DisplayFor(x => model.Thumbprint)
+                    @Html.HiddenFor(x => model.Thumbprint)
+                </div>
             </div>
-            <div class="buttons">
-                <button type="submit">@Configure_cshtml.DeleteCertificate</button>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn btn-large btn-primary">@Configure_cshtml.DeleteCertificate</button>
+                </div>
             </div>            
         }
     }

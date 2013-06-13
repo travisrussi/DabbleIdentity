@@ -3,6 +3,7 @@
  * see license.txt
  */
 
+using NLog;
 using System;
 using System.ComponentModel.Composition;
 using System.IdentityModel.Protocols.WSTrust;
@@ -23,6 +24,7 @@ namespace Thinktecture.IdentityServer.TokenService
     /// </summary>
     public class Request
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         IConfigurationRepository _configuration;
         RequestDetails _details;
 
@@ -56,8 +58,8 @@ namespace Thinktecture.IdentityServer.TokenService
             {
                 throw new ArgumentNullException("principal");
             }
-
-            Tracing.Information("Starting PolicyOptions creation");
+            logger.Info("Starting PolicyOptions creation");
+            logger.Info("Starting PolicyOptions creation");
 
             var clientIdentity = AnalyzeClientIdentity(principal);
 
@@ -92,7 +94,7 @@ namespace Thinktecture.IdentityServer.TokenService
             AnalyzeSsl(details);
             AnalyzeRequestClaims(details);
 
-            Tracing.Information("PolicyOptions creation done.");
+            logger.Info("PolicyOptions creation done.");
 
             _details = details;
             return details;
@@ -110,18 +112,21 @@ namespace Thinktecture.IdentityServer.TokenService
                 throw new ArgumentNullException("details");
             }
 
-            Tracing.Information("Starting policy validation");
+            logger.Info("Starting policy validation");
 
             ValidateKnownRealm(details);
             ValidateRelyingParty(details);
-            ValidateTokenType(details);
+
+            // not needed anymore
+            //ValidateTokenType(details);
+
             ValidateReplyTo(details);
             ValidateEncryption(details);
             ValidateDelegation(details);
 
-            Tracing.Information("Policy Validation succeeded");
+            logger.Info("Policy Validation succeeded");
         }
-        
+
         #region Analyze
         protected virtual void AnalyzeRequestClaims(RequestDetails details)
         {
@@ -133,12 +138,12 @@ namespace Thinktecture.IdentityServer.TokenService
 
                 var requestClaims = new StringBuilder(20);
                 details.RequestClaims.ToList().ForEach(rq => requestClaims.AppendFormat("{0}\n", rq.ClaimType));
-                Tracing.Information("Specific claims requested");
-                Tracing.Information(String.Format("Request claims: {0}", requestClaims));
+                logger.Info("Specific claims requested");
+                logger.Info(String.Format("Request claims: {0}", requestClaims));
             }
             else
             {
-                Tracing.Information("No request claims");
+                logger.Info("No request claims");
             }
         }
 
@@ -146,7 +151,7 @@ namespace Thinktecture.IdentityServer.TokenService
         {
             // determine if reply to is via SSL
             details.UsesSsl = (details.ReplyToAddress.Scheme == Uri.UriSchemeHttps);
-            Tracing.Information(String.Format("SSL used:{0}", details.UsesSsl));
+            logger.Info(String.Format("SSL used:{0}", details.UsesSsl));
         }
 
         protected virtual void AnalyzeReplyTo(RequestDetails details)
@@ -165,7 +170,7 @@ namespace Thinktecture.IdentityServer.TokenService
                     details.ReplyToAddressIsWithinRealm = true;
                 }
 
-                Tracing.Information(String.Format("ReplyTo Address set from configuration: {0}", details.ReplyToAddress.AbsoluteUri));
+                logger.Info(String.Format("ReplyTo Address set from configuration: {0}", details.ReplyToAddress.AbsoluteUri));
             }
             else
             {
@@ -175,7 +180,7 @@ namespace Thinktecture.IdentityServer.TokenService
                     {
                         // explicit address
                         details.ReplyToAddress = new Uri(details.Request.ReplyTo);
-                        Tracing.Information(String.Format("Explicit ReplyTo address set: {0}", details.ReplyToAddress.AbsoluteUri));
+                        logger.Info(String.Format("Explicit ReplyTo address set: {0}", details.ReplyToAddress.AbsoluteUri));
 
                         // check if reply to is a sub-address of the realm address
                         if (details.ReplyToAddress.AbsoluteUri.StartsWith(details.Realm.Uri.AbsoluteUri, StringComparison.OrdinalIgnoreCase))
@@ -183,14 +188,14 @@ namespace Thinktecture.IdentityServer.TokenService
                             details.ReplyToAddressIsWithinRealm = true;
                         }
 
-                        Tracing.Information(String.Format("ReplyTo Address is within Realm: {0}", details.ReplyToAddressIsWithinRealm));
+                        logger.Info(String.Format("ReplyTo Address is within Realm: {0}", details.ReplyToAddressIsWithinRealm));
                     }
                     else
                     {
                         // same as realm
                         details.ReplyToAddress = details.Realm.Uri;
                         details.ReplyToAddressIsWithinRealm = true;
-                        Tracing.Warning(string.Format("ReplyTo address of ({0}) was supplied, but since configuration does not allow ReplyTo, the realm address is used", details.Request.ReplyTo));
+                        logger.Warn(string.Format("ReplyTo address of ({0}) was supplied, but since configuration does not allow ReplyTo, the realm address is used", details.Request.ReplyTo));
                     }
                 }
                 else
@@ -198,7 +203,7 @@ namespace Thinktecture.IdentityServer.TokenService
                     // same as realm
                     details.ReplyToAddress = details.Realm.Uri;
                     details.ReplyToAddressIsWithinRealm = true;
-                    Tracing.Information("ReplyTo address set to realm address");
+                    logger.Info("ReplyTo address set to realm address");
                 }
             }
         }
@@ -208,11 +213,11 @@ namespace Thinktecture.IdentityServer.TokenService
             if (string.IsNullOrWhiteSpace(rst.TokenType))
             {
                 details.TokenType = _configuration.Global.DefaultWSTokenType;
-                Tracing.Information("Token Type: not specified, falling back to default token type");
+                logger.Info("Token Type: not specified, falling back to default token type");
             }
             else
             {
-                Tracing.Information("Token Type: " + rst.TokenType);
+                logger.Info("Token Type: " + rst.TokenType);
                 details.TokenType = rst.TokenType;
             }
         }
@@ -225,12 +230,12 @@ namespace Thinktecture.IdentityServer.TokenService
                 if (TryGetEncryptionCertificateFromRequest(details.Realm, out requestCertificate))
                 {
                     details.EncryptingCertificate = requestCertificate;
-                    Tracing.Information("Encrypting certificate set from RST");
+                    logger.Info("Encrypting certificate set from RST");
                 }
             }
 
             details.UsesEncryption = (details.EncryptingCertificate != null);
-            Tracing.Information("Token encryption: " + details.UsesEncryption);
+            logger.Info("Token encryption: " + details.UsesEncryption);
         }
 
         protected virtual RelyingParty AnalyzeRelyingParty(RequestDetails details)
@@ -249,17 +254,17 @@ namespace Thinktecture.IdentityServer.TokenService
                     traceString += String.Format(" ({0})", rp.Name);
                 }
 
-                Tracing.Information(traceString);
+                logger.Info(traceString);
 
                 if (rp.EncryptingCertificate != null)
                 {
                     details.EncryptingCertificate = rp.EncryptingCertificate;
-                    Tracing.Information("Encrypting certificate set from registry");
+                    logger.Info("Encrypting certificate set from registry");
                 }
             }
             else
             {
-                Tracing.Information("Relying party is not registered.");
+                logger.Info("Relying party is not registered.");
             }
             return rp;
         }
@@ -270,7 +275,7 @@ namespace Thinktecture.IdentityServer.TokenService
             if (rst.ActAs != null)
             {
                 details.IsActAsRequest = true;
-                Tracing.Information("Request is ActAs request");
+                logger.Info("Request is ActAs request");
             }
         }
 
@@ -278,7 +283,7 @@ namespace Thinktecture.IdentityServer.TokenService
         {
             if (!string.IsNullOrEmpty(rst.KeyType))
             {
-                Tracing.Information(String.Format("Requested KeyType: {0}", rst.KeyType));
+                logger.Info(String.Format("Requested KeyType: {0}", rst.KeyType));
             }
         }
 
@@ -288,11 +293,11 @@ namespace Thinktecture.IdentityServer.TokenService
             if (OperationContext.Current != null)
             {
                 details.IsActive = true;
-                Tracing.Information("Active request");
+                logger.Info("Active request");
             }
             else
             {
-                Tracing.Information("Passive request");
+                logger.Info("Passive request");
             }
         }
 
@@ -312,7 +317,7 @@ namespace Thinktecture.IdentityServer.TokenService
 
             if (!clientIdentity.IsAuthenticated)
             {
-                Tracing.Error("Client Identity is anonymous");
+                logger.Error("Client Identity is anonymous");
                 throw new ArgumentException("client identity");
             }
 
@@ -350,13 +355,13 @@ namespace Thinktecture.IdentityServer.TokenService
             {
                 if (!_configuration.WSTrust.EnableDelegation)
                 {
-                    Tracing.Error("Request is ActAs request - but ActAs is not enabled");
+                    logger.Error("Request is ActAs request - but ActAs is not enabled");
                     throw new InvalidRequestException("Request is ActAs request - but ActAs is not enabled");
                 }
 
                 if (!DelegationRepository.IsDelegationAllowed(details.ClientIdentity.Name, details.Realm.Uri.AbsoluteUri))
                 {
-                    Tracing.Error(String.Format("ActAs mapping not found."));
+                    logger.Error(String.Format("ActAs mapping not found."));
                     throw new InvalidRequestException("ActAs mapping not found.");
                 }
             }
@@ -370,7 +375,7 @@ namespace Thinktecture.IdentityServer.TokenService
                     details.RelyingPartyRegistration.SymmetricSigningKey == null ||
                     details.RelyingPartyRegistration.SymmetricSigningKey.Length == 0)
                 {
-                    Tracing.Error("Token with symmetric siganture requested, but no symmetric signing key found");
+                    logger.Error("Token with symmetric siganture requested, but no symmetric signing key found");
                     throw new InvalidRequestException("Token with symmetric siganture requested, but no symmetric signing key found");
                 }
             }
@@ -381,7 +386,7 @@ namespace Thinktecture.IdentityServer.TokenService
             // check if token must be encrypted
             if (_configuration.Global.RequireEncryption && (!details.UsesEncryption))
             {
-                Tracing.Error("Configuration requires encryption - but no key available");
+                logger.Error("Configuration requires encryption - but no key available");
                 throw new InvalidRequestException("No encryption key available");
             }
         }
@@ -393,7 +398,7 @@ namespace Thinktecture.IdentityServer.TokenService
             {
                 if (_configuration.WSFederation.RequireReplyToWithinRealm && (!details.ReplyToAddressIsWithinRealm))
                 {
-                    Tracing.Error("Configuration requires that ReplyTo is a sub-address of the realm - this is not the case");
+                    logger.Error("Configuration requires that ReplyTo is a sub-address of the realm - this is not the case");
                     throw new InvalidRequestException("Invalid ReplyTo");
                 }
             }
@@ -404,7 +409,7 @@ namespace Thinktecture.IdentityServer.TokenService
             // check if realm is allowed
             if (_configuration.Global.RequireRelyingPartyRegistration && (!details.IsKnownRealm))
             {
-                Tracing.Error("Configuration requires a known realm - but realm is not registered");
+                logger.Error("Configuration requires a known realm - but realm is not registered");
 
                 throw new InvalidRequestException("Invalid realm: " + details.Realm.Uri.AbsoluteUri);
             }
@@ -416,7 +421,7 @@ namespace Thinktecture.IdentityServer.TokenService
             {
                 if (details.RelyingPartyRegistration.Enabled == false)
                 {
-                    Tracing.Error("Relying party is disabled");
+                    logger.Error("Relying party is disabled");
 
                     throw new InvalidRequestException("Invalid realm: " + details.Realm.Uri.AbsoluteUri);
                 }
@@ -430,7 +435,7 @@ namespace Thinktecture.IdentityServer.TokenService
             {
                 throw new ArgumentNullException("appliesTo");
             }
-            
+
             certificate = null;
 
             var epi = appliesTo.Identity as X509CertificateEndpointIdentity;

@@ -7,7 +7,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
     {
         public string TokenString { get; set; }
         public string RedirectUrl { get; set; }
-        
+
         public OAuthTitleGrantResult(string tokenString, string redirectUrl)
         {
             this.TokenString = tokenString;

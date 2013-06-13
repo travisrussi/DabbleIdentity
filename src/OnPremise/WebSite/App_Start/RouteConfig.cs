@@ -8,6 +8,7 @@ namespace Thinktecture.IdentityServer.Web
     {
         public static void RegisterRoutes(RouteCollection routes, IConfigurationRepository configuration, IUserRepository userRepository)
         {
+            //TODO fix home routing
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             #region Administration & Configuration
@@ -45,15 +46,20 @@ namespace Thinktecture.IdentityServer.Web
             #region Main UI
             routes.MapRoute(
                 "Account",
-                "account/{action}",
+                "account/{action}/{id}",
                 new { controller = "Account", action = "Index", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 "Home",
                 "{action}",
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional },
-                new string[]{"Thinktecture.IdentityServer.Web.Controllers"}
+                new { controller = "Account", action = "SignIn", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                "Error",
+                "Error/{action}/{message}",
+                new { controller = "Error", action = "Index", message = UrlParameter.Optional }
             );
             #endregion
         }

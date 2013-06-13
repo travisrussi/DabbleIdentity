@@ -1,4 +1,25 @@
-﻿<div class="masterHeader">
-    <img src="@Url.Content("~/Content/images/logo.jpg")" alt="Logo" />
-    <h2 class="masterHeaderText">@ViewBag.SiteName</h2>
+﻿<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">@ViewBag.SiteName</a>
+            <div class="nav-collapse">
+                @if (!(ViewBag.HideMenu == true))
+                {
+                    @Html.Partial("_Menu")
+                }
+                <div class="nav pull-right">
+                    <div class="navbar-text">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+        

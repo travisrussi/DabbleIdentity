@@ -3,6 +3,7 @@
  * see license.txt
  */
 
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,9 +20,11 @@ namespace Thinktecture.IdentityServer.TokenService
         [Import]
         public IUserRepository UserRepository { get; set; }
 
+        static Logger logger = LogManager.GetCurrentClassLogger();
+
         public override ReadOnlyCollection<ClaimsIdentity> ValidateToken(SecurityToken token)
         {
-            Tracing.Information("Beginning client certificate token validation and authentication for SOAP");
+            logger.Info("Beginning client certificate token validation and authentication for SOAP");
             Container.Current.SatisfyImportsOnce(this);
             
             // call base class implementation for validation and claims generation 
@@ -29,22 +32,22 @@ namespace Thinktecture.IdentityServer.TokenService
 
             // retrieve thumbprint
             var clientCert = ((X509SecurityToken)token).Certificate;
-            Tracing.Information(String.Format("Client certificate thumbprint: {0}", clientCert.Thumbprint));
+            logger.Info(String.Format("Client certificate thumbprint: {0}", clientCert.Thumbprint));
 
             // check if mapped user exists
             string userName;
             if (!UserRepository.ValidateUser(clientCert, out userName))
             {
                 var message = String.Format("No mapped user exists for thumbprint {0}", clientCert.Thumbprint);
-                Tracing.Error(message);
+                logger.Error(message);
                 throw new SecurityTokenValidationException(message);
             }
 
-            Tracing.Information(String.Format("Mapped user found: {0}", userName));
+            logger.Info(String.Format("Mapped user found: {0}", userName));
 
             // retrieve issuer name
             var issuer = identity.Claims.First().Issuer;
-            Tracing.Information(String.Format("Certificate issuer: {0}", issuer));
+            logger.Info(String.Format("Certificate issuer: {0}", issuer));
 
             // create new ClaimsIdentity for the STS issuance logic
             var claims = new List<Claim>

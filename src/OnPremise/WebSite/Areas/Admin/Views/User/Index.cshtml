@@ -4,38 +4,52 @@
 @{
     ViewBag.Title = Index_cshtml.Users;
 }
-@using (Html.BeginForm())
+
+           @using (Html.BeginForm("Filter", "User", FormMethod.Post, new { @class = "form-horizontal offset8" }))
+           {
+
+               @Html.AntiForgeryToken()
+
+        
+               @Html.EditorFor(m => m.Filter)
+              <button class="buttons">Search</button>
+
+           }
+@using (Html.BeginForm(Html.BeginForm("index", "User", FormMethod.Post, new { @class = "form-horizontal" })))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(Index_cshtml.ErrorDeletingUsers)
+    @Html.ValidationSummary(Index_cshtml.ErrorDeletingUsers, new { @class = "alert alert-error" })
 
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
+
         @{
-            var list = Model.UsersDeleteList;
+    var list = Model.UsersDeleteList;
         }
         @for (int i = 0; i < list.Length; i++)
         {
-            <div>
+            <div class="control-group">
+
                 @Html.HiddenFor(x => list[i].Username)
-                @Html.LabelFor(x => list[i].Delete, list[i].Username)
-                @Html.CheckBoxFor(x => list[i].Delete)
-                @Html.ActionLink(Index_cshtml.Roles, "Roles", new{id=list[i].Username})
-                @Html.ActionLink("password", "ChangePassword", new { id = list[i].Username })
-                @if (Model.IsProfileEnabled)
-                {
-                    @Html.ActionLink(Index_cshtml.Profile, "Profile", new{id=list[i].Username})
-                }
-                @if (Model.IsOAuthRefreshTokenEnabled)
-                {
-                    @Html.ActionLink("tokens", "Index", "OAuthRefreshToken", new{username=list[i].Username}, null)
-                }
+                @Html.LabelFor(x => list[i].Delete, list[i].Username, new { @class = "control-label" })
+
+                <div class="controls">
+                    @Html.CheckBoxFor(x => list[i].Delete)
+                    @Html.ActionLink("roles", "Roles", new { username = list[i].Username })
+                    @if (Model.IsProfileEnabled)
+                    {
+                        @Html.ActionLink("profile", "Profile", new { id = list[i].Username })
+                    }
+                </div>
             </div>
         }
-        <div class="buttons">
-            <button type="submit" name="action" value="delete">@Index_cshtml.DeleteSelected</button>
-            <button type="submit" name="action" value="new">@Index_cshtml.New</button>
-            <button type="reset">@Index_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" name="action" value="delete" class="btn btn-large">@Index_cshtml.DeleteSelected</button>
+                <button type="submit" name="action" value="new" class="btn btn-large">@Index_cshtml.New</button>
+                <button type="reset" class="btn btn-large">@Index_cshtml.Cancel</button>
+            </div>
         </div>
     </fieldset>
 }
+

@@ -5,18 +5,19 @@
     ViewBag.Title = Index_cshtml.GeneralConfiguration;
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("index", "General", FormMethod.Post, new { @class="form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(Index_cshtml.ErrorUpdatingConfiguration)
-    <fieldset class="editor">
-        <legend>@ViewBag.Title</legend>
+    @Html.ValidationSummary(Index_cshtml.ErrorUpdatingConfiguration, new { @class = "alert alert-error" })
+    @*ViewBag.Title*@
 
-        @Html.EditorForModel()
-
-        <div class="buttons">
-            <button type="submit">@Index_cshtml.SaveChanges</button>
-            <button type="reset">@Index_cshtml.Cancel</button>
+    @Html.EditorForModel()
+    
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-large btn-primary">@Index_cshtml.SaveChanges</button>
+            <button type="reset" class="btn btn-large">@Index_cshtml.Cancel</button>
         </div>
-    </fieldset>
+    </div>
+    
 }

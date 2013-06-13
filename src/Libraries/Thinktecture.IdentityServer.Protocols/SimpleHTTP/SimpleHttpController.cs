@@ -12,12 +12,14 @@ using System.Security.Claims;
 using System.Web.Http;
 using Thinktecture.IdentityModel.Authorization.WebApi;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols.SimpleHTTP
 {
     [ClaimsAuthorize(Constants.Actions.Issue, Constants.Resources.SimpleHttp)]
     public class SimpleHttpController : ApiController
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         [Import]
         public IConfigurationRepository ConfigurationRepository { get; set; }
 
@@ -33,7 +35,7 @@ namespace Thinktecture.IdentityServer.Protocols.SimpleHTTP
 
         public HttpResponseMessage Get(HttpRequestMessage request)
         {
-            Tracing.Information("Simple HTTP endpoint called.");
+            logger.Info("Simple HTTP endpoint called.");
 
             var query = request.GetQueryNameValuePairs();
             var auth = new AuthenticationHelper();
@@ -50,11 +52,11 @@ namespace Thinktecture.IdentityServer.Protocols.SimpleHTTP
             try
             {
                 appliesTo = new EndpointReference(realm);
-                Tracing.Information("Simple HTTP endpoint called for realm: " + realm);
+                logger.Info("Simple HTTP endpoint called for realm: " + realm);
             }
             catch
             {
-                Tracing.Error("Malformed realm: " + realm);
+                logger.Error("Malformed realm: " + realm);
                 return request.CreateErrorResponse(HttpStatusCode.BadRequest, "malformed realm name.");
             }
 
@@ -63,7 +65,7 @@ namespace Thinktecture.IdentityServer.Protocols.SimpleHTTP
                 tokenType = ConfigurationRepository.Global.DefaultHttpTokenType;
             }
 
-            Tracing.Verbose("Token type: " + tokenType);
+            logger.Info("Token type: " + tokenType);
 
             TokenResponse tokenResponse;
             var sts = new STS();

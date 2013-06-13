@@ -4,24 +4,25 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Security.AccessControl;
+using Thinktecture.IdentityServer.Models;
 
 namespace Thinktecture.IdentityServer.Web.ViewModels
 {
     public class SignInModel
     {
         [Required]
-        [Display(Name = "UserName", ResourceType = typeof(Resources.SignInModel))]
+        [DisplayName("User name")]
         public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password", ResourceType = typeof(Resources.SignInModel))]
+        [DisplayName("Password")]
         public string Password { get; set; }
 
-        [Display(Name = "EnableSSO", ResourceType = typeof(Resources.SignInModel))]
+        [DisplayName("Remember me?")]
         public bool EnableSSO { get; set; }
 
         bool? isSigninRequest;

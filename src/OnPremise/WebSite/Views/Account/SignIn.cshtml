@@ -1,57 +1,96 @@
-﻿@using Thinktecture.IdentityServer.Web.App_LocalResources.Account
-@model Thinktecture.IdentityServer.Web.ViewModels.SignInModel
+﻿@model Thinktecture.IdentityServer.Web.ViewModels.CombinationLoginRegisterModel
 
-@{
-    ViewBag.Title = SignIn_cshtml.UsernamePasswordSignIn;
-    if (Model.IsSigninRequest)
-    {
-        ViewBag.HideMenu = true;
-    }
-}
 
-@if (User.Identity.IsAuthenticated)
+@section styles
 {
-    <h2>@string.Format(SignIn_cshtml.UnauthorizedAuthenticatedUser, User.Identity.Name)</h2>
+    <link type="text/css" rel="stylesheet" href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/bundles/css/openid")" />
 }
 
-@using (Html.BeginForm())
-{
-    @Html.ValidationSummary(true, SignIn_cshtml.SignInWasUnsuccessful)
-    <fieldset class="editor small signin">
-        <legend>@SignIn_cshtml.Login</legend>
-        <div>
-            @Html.LabelFor(m => m.UserName)
-            @Html.TextBoxFor(m => m.UserName)
-            @Html.ValidationMessageFor(m => m.UserName)
-        </div>
-                
-        <div>
-            @Html.LabelFor(m => m.Password)
-            @Html.PasswordFor(m => m.Password)
-            @Html.ValidationMessageFor(m => m.Password)
-        </div>
-                
-        <div>
-            @Html.LabelFor(m => m.EnableSSO)
-            @Html.CheckBoxFor(m => m.EnableSSO)
-        </div>
-                
-        <div class="buttons">
-            <input type="submit" value="@SignIn_cshtml.SignIn" />
-        </div>
-    </fieldset>
-}
+<div class="span10 offset1 middle-aligned">
+    <div class="span6">
+        @*<form class="well primary hinted validate">*@
+        @using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { @class = "well primary hinted validate" }))
+        {                
+            @Html.ValidationSummary("An error occured while trying to login", new { @class = "alert alert-error" })
+            if (ViewBag.DisplayInfoMessage != null && ViewBag.DisplayInfoMessage)
+            {
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                @ViewBag.Message
 
-@if (Model.ShowClientCertificateLink)
-{ 
-    @Html.ActionLink(SignIn_cshtml.UseClientCertificate, "CertificateSignIn", new { returnUrl = Model.ReturnUrl }) 
-}
+            </div>
+            }
+            @Html.HiddenFor(m => m.ReturnUrl)
+                
+            <div class="controls-row">
+
+
+                <label class="control-label">E-mail address</label>
+                <div class="input-prepend">
+                    <span class="add-on left"><i class="icon-user"></i></span>
+                    @Html.TextBoxFor(m => m.Email, new { @type = "email", required = "", pattern = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$", @placeholder = "E-mail address", @title = "", @id = "UserName", data_hint = "Required<br/>Valid E-mail address", tabindex = 1 })          
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <label class="control-label">Password <a href="@Url.Action("Forget")" class="pull-right forget-link registertoggle">forgot?</a></label>
+                <div class="input-prepend">
+                    <span class="add-on left"><i class="icon-lock"></i></span>
+                    @Html.PasswordFor(m => m.Password,
+                        new { @placeholder = "Password", @required = true, @id = "password1", @pattern = "^.{5}.+$", @title = "", @data_hint = "Required<br/>Minimal 6 characters", tabindex = 2 })
+                </div>
+            </div>
+
+                
+            string registerhidden;
+            string loginhidden;
+            string registerButtonImage;
+            if (null != Model && Model.Registring)
+            {
+                registerhidden = "";
+                registerButtonImage = "new";
+            }
+            else
+            {
+                registerButtonImage = "";
+                registerhidden = "hidden";
+            }
+            <div class="controls-row @registerhidden registertoggle">
+                <label class="control-label">Repeat Password</label>
+                <div class="input-prepend">
+                    <span class="add-on left"><i class="icon-lock"></i></span>
+                    @Html.PasswordFor(m => m.ConfirmPassword,
+                        new { @placeholder = "Password", @required = true, @class = "h5-matchingpassword", @title = "", @data_hint = "Required<br/>Minimal 6 characters<br/>Same as new password", tabindex = 3 })
+                </div>
+            </div>
+                
+            <div class="controls-row">
+                <label class="checkbox inline">
+                    @Html.CheckBoxFor(m => m.EnableSSO, new { @class = "novalidate" })
+                    <span class="nowrap">Remember Me</span>
+                </label>
+                <label class="checkbox inline">
+                    @Html.CheckBoxFor(m => m.Registring, new { id = "create-check", @class = "novalidate" })
+                    <span class="nowrap">I'm new here</span>
+                </label>
+            </div>
+
+            <div class="clearfix breath-v">
+                <button type="submit" class="btn btn-large pull-right  @registerButtonImage">Login</button>
+            </div>
+        }
+     </div>
+                @Html.Action("GetIdentityProviders", "Hrd", new { area = "" })
+
+
+</div>
+
 
 @section scripts
 {
-<script type="text/javascript">
-    $(function () {
-        $("#UserName").focus();
-    });
-</script>
+    <script type="text/javascript">
+        $(function () {
+            $("#UserName").focus();
+        });
+    </script>
 }

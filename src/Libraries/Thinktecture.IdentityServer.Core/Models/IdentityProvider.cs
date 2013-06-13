@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Thinktecture.IdentityServer.DataAnnotationExtention;
 
 namespace Thinktecture.IdentityServer.Models
 {
@@ -15,31 +16,34 @@ namespace Thinktecture.IdentityServer.Models
         public int ID { get; set; }
 
         [Required]
-        [Display(Order = 1, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "Name", Description = "NameDescription")]
+        [Display(Order = 1, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "Name", Description = "NameDescription")]
         public string Name { get; set; }
 
         [Required]
-        [Display(Order = 2, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "DisplayName", Description = "DisplayNameDescription")]
+        [Display(Order = 2, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "DisplayName", Description = "DisplayNameDescription")]
         public string DisplayName { get; set; }
 
-        [Display(Order = 3, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "Enabled", Description = "EnabledDescription")]
+        [Display(Order = 3, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "Enabled", Description = "EnabledDescription")]
         public bool Enabled { get; set; }
 
-        [Display(Order = 4, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "ShowInHrdSelection", Description = "ShowInHrdSelectionDescription")]
+        [Display(Order = 4, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ShowInHrdSelection", Description = "ShowInHrdSelectionDescription")]
         public bool ShowInHrdSelection { get; set; }
 
         [Required]
         [UIHint("Enum")]
-        [Display(Order = 5, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "Type", Description = "TypeDescription")]
-        public Models.IdentityProviderTypes Type { get; set; }
+        [Display(Order = 5, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "Type", Description = "TypeDescription")]
+        public Models.IdentityProviderTypes? Type { get; set; }
 
-        [Display(Order = 6, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "WSFederationEndpoint", Description = "WSFederationEndpointDescription")]
+
+        [Display(Order = 6, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "WSFederationEndpoint", Description = "WSFederationEndpointDescription")]
         [AbsoluteUri]
+        [HtmlDivClassPropertiesAttribute(divClass = "wsFed")]
         public string WSFederationEndpoint { get; set; }
 
         string _IssuerThumbprint;
         [UIHint("Thumbprint")]
-        [Display(Order = 7, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "IssuerThumbprint", Description = "IssuerThumbprintDescription")]
+        [HtmlDivClassPropertiesAttribute(divClass = "wsFed")]
+        [Display(Order = 7, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "IssuerThumbprint", Description = "IssuerThumbprintDescription")]
         public string IssuerThumbprint
         {
             get
@@ -53,15 +57,28 @@ namespace Thinktecture.IdentityServer.Models
             }
         }
 
-        [Display(Order = 8, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "ProviderType", Description = "ProviderTypeDescription")]
-        [UIHint("Enum")]
-        public OAuth2ProviderTypes? ProviderType { get; set; }
+        [Display(Order = 8, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ProviderType")]
+        [UIHint("Enum")]  
+        [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
+        public OAuth2ProviderTypes? OAuth2ProviderType { get; set; }
 
-        [Display(Order = 9, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "ClientID", Description = "ClientIDDescription")]
+        [Display(Order = 9, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ClientID")]
+        [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
         public string ClientID { get; set; }
 
-        [Display(Order = 10, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "ClientSecret", Description = "ClientSecretDescription")]
+        [Display(Order = 10, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ClientSecret")]
+        [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
         public string ClientSecret { get; set; }
+
+        //TODO extend scope for all identity providers
+        [Display(Order = 11, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "Scope")]
+        [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
+        public string Scope { get; set; }
+
+        [Display(Order = 12, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "OpenIdProvider")]
+        [UIHint("Enum")]
+        [HtmlDivClassPropertiesAttribute(divClass = "openId")]
+        public OpenIdProviderTypes? OpenIdProviderType { get; set; }
 
         public System.Collections.Generic.IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -88,9 +105,17 @@ namespace Thinktecture.IdentityServer.Models
                 {
                     errors.Add(new ValidationResult(Resources.Models.IdentityProvider.ClientSecretRequiredError, new string[] { "ClientSecret" }));
                 }
-                if (this.ProviderType == null)
+                if (this.OAuth2ProviderType == null)
                 {
                     errors.Add(new ValidationResult(Resources.Models.IdentityProvider.ProviderTypeRequiredError, new string[] { "ProfileType" }));
+                }
+            }
+            if (this.Type == IdentityProviderTypes.OpenId)
+            {
+                if (this.OpenIdProviderType == null)
+                {
+                    //TODO Implement language setting
+                    errors.Add(new ValidationResult("OpenId Provider Type is required.", new string[] { "ProfileType" }));
                 }
             }
 

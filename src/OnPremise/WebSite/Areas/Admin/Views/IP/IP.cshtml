@@ -15,26 +15,61 @@
 @{
     var action = Model.ID == 0 ? "Create" : "Update";
 }
-@using (Html.BeginForm(action, "IP", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm(action, "IP", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(IP_cshtml.ErrorUpdatingIdentityProvider)
+    @Html.ValidationSummary(IP_cshtml.ErrorUpdatingIdentityProvider, new { @class = "alert alert-error" })
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
 
         @Html.EditorForModel()
 
-        <div class="buttons">
-            @if (Model.ID > 0)
-            {
-                <button type="submit" name="action" value="save">@IP_cshtml.SaveChanges</button>
-                <button type="submit" name="action" value="delete">@IP_cshtml.Delete</button>
-            }
-            else
-            {
-                <button type="submit" name="action" value="create">@IP_cshtml.Create</button>
-            }
-            <button type="reset">@IP_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                @if (Model.ID > 0)
+                {
+                    <button type="submit" name="action" value="save" class="btn btn-large btn-primary">@IP_cshtml.SaveChanges</button>
+                    <button type="submit" name="action" value="delete" class="btn btn-large">@IP_cshtml.Delete</button>
+                }
+                else
+                {
+                    <button type="submit" name="action" value="create" class="btn btn-large">@IP_cshtml.Create</button>
+                }
+                <button type="reset">@IP_cshtml.Cancel</button>
+            </div>
         </div>
     </fieldset>
 }
+<script>
+
+    $('.openId').slideToggle().hide();
+    $('.wsFed').slideToggle().hide();
+    $('.oauth2').slideToggle().hide();
+
+    $('#Type').change(function () {
+        //1 = WSStar
+        //2 = OAuth2
+        //3 = OpenId
+        if ($(this).val() == "1") {
+            $('.wsFed').slideToggle().show();
+        }
+        else {
+            $('.wsFed').slideToggle().hide();
+        }
+        if ($(this).val() == "2")
+        {
+            $('.oauth2').slideToggle().show();
+        }
+        else {
+            $('.oauth2').slideToggle().hide();
+        }
+        if ($(this).val() == "3")
+        {
+            $('.openId').slideToggle().show();
+        }
+        else {
+            $('.openId').slideToggle().hide();
+        }
+
+    });
+</script>

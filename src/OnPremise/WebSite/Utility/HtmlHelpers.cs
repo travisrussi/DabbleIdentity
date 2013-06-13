@@ -2,11 +2,23 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
+using System.Web.Routing;
+using System.Web.Mvc.Html;
 
 namespace Thinktecture.IdentityServer.Web.Utility
 {
     public static class HtmlHelpers
     {
+        public static MvcHtmlString DisplayNameFor<TModel, TProperty>(
+            this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TProperty>> expression
+        )
+        {
+            var meta = ModelMetadata.FromLambdaExpression<TModel, TProperty>(expression, htmlHelper.ViewData);
+            var ret = meta.DisplayName ?? (meta.PropertyName ?? ExpressionHelper.GetExpressionText(expression));
+            return MvcHtmlString.Create(ret);
+        }
+
         public static MvcHtmlString ValidatorFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
         {
             var prop = ModelMetadata.FromLambdaExpression<TModel, TValue>(expression, html.ViewData);
@@ -52,5 +64,6 @@ namespace Thinktecture.IdentityServer.Web.Utility
 
             return MvcHtmlString.Empty;
         }
+
     }
 }

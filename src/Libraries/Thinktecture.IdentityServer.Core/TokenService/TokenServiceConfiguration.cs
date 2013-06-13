@@ -9,6 +9,7 @@ using System.IdentityModel.Configuration;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer.TokenService
 {
@@ -19,13 +20,13 @@ namespace Thinktecture.IdentityServer.TokenService
     {
         private static readonly object _syncRoot = new object();
         private static Lazy<TokenServiceConfiguration> _configuration = new Lazy<TokenServiceConfiguration>();
-
+        static Logger logger = LogManager.GetCurrentClassLogger();
         [Import]
         public IConfigurationRepository ConfigurationRepository { get; set; }
 
         public TokenServiceConfiguration() : base()
         {
-            Tracing.Information("Configuring token service");
+            logger.Info("Configuring token service");
             Container.Current.SatisfyImportsOnce(this);
 
             SecurityTokenService = typeof(TokenService);
@@ -38,7 +39,7 @@ namespace Thinktecture.IdentityServer.TokenService
 
             if (ConfigurationRepository.WSTrust.EnableDelegation)
             {
-                Tracing.Information("Configuring identity delegation support");
+                logger.Info("Configuring identity delegation support");
 
                 try
                 {
@@ -51,8 +52,8 @@ namespace Thinktecture.IdentityServer.TokenService
                 }
                 catch (Exception ex)
                 {
-                    Tracing.Error("Error configuring identity delegation");
-                    Tracing.Error(ex.ToString());
+                    logger.Error("Error configuring identity delegation");
+                    logger.Error(ex.ToString());
                     throw;
                 }
             }

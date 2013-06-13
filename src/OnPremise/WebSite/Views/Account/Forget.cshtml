@@ -1,0 +1,27 @@
+﻿
+@model  Thinktecture.IdentityServer.Web.ViewModels.ForgotModel
+@{
+    ViewBag.Title = "Forgot password";
+}
+
+<div class="span4 offset4 middle-aligned">
+    @using (Html.BeginForm("Forget", "Account", FormMethod.Post, new { @class = "well pop primary hinted validate clearfix" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("" ,new { @class = "alert alert-error" })
+       
+        <div class="controls-row">
+			<label class="control-label">E-mail address</label>
+			<div class="input-prepend full-width">
+				<span class="add-on left"><i class="icon-user"></i></span>
+				@Html.TextBoxFor(m => m.UserName, new { @type = "email",required = "", pattern="^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$", @placeholder = "Emailadres", @title = "", @id = "UserName", data_hint = "Required<br/>Valid E-mail adress " })                   
+			</div>
+        </div>
+		  
+		<button type="submit" class="pull-right submitbutton send">Send</button>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -7,9 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Web.Profile;
 using System.Web.Security;
+using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.TokenService;
 
 namespace Thinktecture.IdentityServer.Repositories
@@ -24,7 +26,8 @@ namespace Thinktecture.IdentityServer.Repositories
             var claims = new List<Claim>(from c in principal.Claims select c);
 
             // email address
-            string email = Membership.FindUsersByName(userName)[userName].Email;
+            //TODO fix this sending the claims
+            string email = userName;
             if (!String.IsNullOrEmpty(email))
             {
                 claims.Add(new Claim(ClaimTypes.Email, email));
@@ -34,19 +37,33 @@ namespace Thinktecture.IdentityServer.Repositories
             GetRolesForToken(userName).ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
 
             // profile claims
+
+            // profile claims
+            claims.AddRange(GetProfileClaims(userName));
+            return claims;
+        }
+        //TODO check if this new Claim System works
+        protected virtual IEnumerable<Claim> GetProfileClaims(string userName)
+        {
+            var claims = new List<Claim>();
+
             if (ProfileManager.Enabled)
             {
-                var profile = ProfileBase.Create(userName, true);
+                IUserManagementRepository user = new ProviderUserManagementRepository();
+                UserProfile profile = user.GetByUsername(userName);
+                //= .Create(userName, true) as UserProfile;
+                //var profile = ProfileBase.Create(userName, true);
                 if (profile != null)
                 {
-                    foreach (SettingsProperty prop in ProfileBase.Properties)
+                    foreach (var prop in profile.GetType().GetProperties())
                     {
-                        object value = profile.GetPropertyValue(prop.Name);
-                        if (value != null)
+                        var exist = prop.GetCustomAttribute<ClaimAttribute>();
+                        if (exist != null)
                         {
-                            if (!string.IsNullOrWhiteSpace(value.ToString()))
+                            object value = prop.GetValue(profile);
+                            if (value != null)
                             {
-                                claims.Add(new Claim(ProfileClaimPrefix + prop.Name.ToLowerInvariant(), value.ToString()));
+                                claims.Add(new Claim(GetProfileClaimType(prop.Name.ToLowerInvariant()), value.ToString()));
                             }
                         }
                     }
@@ -55,6 +72,19 @@ namespace Thinktecture.IdentityServer.Repositories
 
             return claims;
         }
+
+        protected virtual string GetProfileClaimType(string propertyName)
+        {
+            if (StandardClaimTypes.Mappings.ContainsKey(propertyName))
+            {
+                return StandardClaimTypes.Mappings[propertyName];
+            }
+            else
+            {
+                return string.Format("{0}{1}", ProfileClaimPrefix, propertyName);
+            }
+        }
+
 
         public IEnumerable<string> GetSupportedClaimTypes()
         {
@@ -67,9 +97,13 @@ namespace Thinktecture.IdentityServer.Repositories
 
             if (ProfileManager.Enabled)
             {
-                foreach (SettingsProperty prop in ProfileBase.Properties)
+                foreach (PropertyInfo prop in typeof(UserProfile).GetProperties())
                 {
-                    claimTypes.Add(ProfileClaimPrefix + prop.Name.ToLowerInvariant());
+                    var exist = prop.GetCustomAttribute<ClaimAttribute>();
+                    if (exist != null)
+                    {
+                         claimTypes.Add(GetProfileClaimType(prop.Name.ToLowerInvariant()));
+                    }
                 }
             }
 

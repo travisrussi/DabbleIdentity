@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.Composition;
 using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.Repositories;
 
@@ -32,7 +28,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
         {
             get
             {
-                return !IsNew && 
+                return !IsNew &&
                     (Client.AllowCodeFlow || Client.AllowResourceOwnerFlow) &&
                     ConfigurationRepository.OAuth2.Enabled &&
                     (ConfigurationRepository.OAuth2.EnableCodeFlow || ConfigurationRepository.OAuth2.EnableResourceOwnerFlow);

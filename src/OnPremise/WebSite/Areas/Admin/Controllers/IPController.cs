@@ -6,6 +6,7 @@ using Thinktecture.IdentityModel.Authorization.Mvc;
 using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.Repositories;
 using Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels;
+using Thinktecture.IdentityServer.Web.Utility;
 
 namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
 {
@@ -124,6 +125,15 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 {
                     this.identityProviderRepository.Add(model);
                     TempData["Message"] = Resources.IPController.IdentityProviderCreated;
+                    var config = new AuthConfig();
+                    if (model.Type == IdentityProviderTypes.OAuth2)
+                    {
+                        config.RegisterOauth2IdentityProvider(model);
+                    }
+                    else if (model.Type == IdentityProviderTypes.OpenId)
+                    {
+                        config.RegisterOauth2IdentityProvider(model);
+                    }
                     return RedirectToAction("IP", new { id=model.ID });
                 }
                 catch (ValidationException ex)
@@ -164,6 +174,15 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 {
                     this.identityProviderRepository.Update(model);
                     TempData["Message"] = Resources.IPController.IdentityProviderUpdated; ;
+                    var config = new AuthConfig();
+                    if (model.Type == IdentityProviderTypes.OAuth2)
+                    {
+                        config.RegisterOauth2IdentityProvider(model);
+                    }
+                    else if (model.Type == IdentityProviderTypes.OpenId)
+                    {
+                        config.RegisterOauth2IdentityProvider(model);
+                    }
                     return RedirectToAction("IP", new { id = model.ID });
                 }
                 catch (ValidationException ex)

@@ -237,7 +237,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
                 SamlAuthenticationEnabled = entity.SamlAuthenticationEnabled,
                 JwtAuthenticationEnabled = entity.JwtAuthenticationEnabled,
                 PassThruAuthenticationToken = entity.PassThruAuthenticationToken,
-                AuthenticationTokenLifetime = entity.AuthenticationTokenLifetime,    
+                AuthenticationTokenLifetime = entity.AuthenticationTokenLifetime,
                 UserNameAuthenticationEndpoint = entity.UserNameAuthenticationEndpoint,
                 FederationEndpoint = entity.FederationEndpoint,
                 IssuerThumbprint = entity.IssuerThumbprint,
@@ -426,7 +426,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
             {
                 ID = client.Id,
                 ClientId = client.ClientId,
-                //ClientSecret = client.ClientSecret,
+                ClientSecret = client.ClientSecret,
                 HasClientSecret = !String.IsNullOrWhiteSpace(client.ClientSecret),
                 Description = client.Description,
                 Name = client.Name,
@@ -487,7 +487,9 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
                     IssuerThumbprint = idp.IssuerThumbprint,
                     ClientID = idp.ClientID,
                     ClientSecret = idp.ClientSecret,
-                    ProviderType = (OAuth2ProviderTypes?)idp.OAuth2ProviderType,
+                    Scope = idp.Scope,
+                    OAuth2ProviderType = (OAuth2ProviderTypes?)idp.OAuth2ProviderType,
+                    OpenIdProviderType = (OpenIdProviderTypes?)idp.OpenIdProviderType
                 });
         }
 
@@ -510,7 +512,9 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
                 IssuerThumbprint = idp.IssuerThumbprint,
                 ClientID = idp.ClientID,
                 ClientSecret = idp.ClientSecret,
-                ProviderType = (OAuth2ProviderTypes?)idp.OAuth2ProviderType,
+                Scope = idp.Scope,
+                OAuth2ProviderType = (OAuth2ProviderTypes?)idp.OAuth2ProviderType,
+                OpenIdProviderType = (OpenIdProviderTypes?)idp.OpenIdProviderType
             };
         }
 
@@ -543,7 +547,9 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
             entity.IssuerThumbprint = idp.IssuerThumbprint;
             entity.ClientID = idp.ClientID;
             entity.ClientSecret = idp.ClientSecret;
-            entity.OAuth2ProviderType = (int?)idp.ProviderType;
+            entity.Scope = idp.Scope;
+            entity.OAuth2ProviderType = (int?)idp.OAuth2ProviderType;
+            entity.OpenIdProviderType = (int?)idp.OpenIdProviderType;
         }
 
         #endregion
@@ -562,5 +568,106 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
             };
         }
         #endregion
+
+        #region UserProfile
+
+        public static Models.UserProfile ToDomainModel(this Entities.UserProfile profile) //JWIJDE20130201 Mapper function..
+        {
+            //TODO: use an automapper.
+            //TODO: Roles and memberships
+            if (profile == null)
+            {
+                return null;
+            }
+
+            CountryEnum countryEnum;
+            switch (profile.Country)
+            {
+                case "Nederland":
+                    countryEnum = CountryEnum.Nederland;
+                    break;
+                case "Frankrijk":
+                    countryEnum = CountryEnum.Frankrijk;
+                    break;
+                case "Belgie":
+                    countryEnum = CountryEnum.Belgie;
+                    break;
+                case "Duitsland":
+                    countryEnum = CountryEnum.Duitsland;
+                    break;
+                default:
+                    countryEnum = CountryEnum.Nederland;
+                    break;
+            }
+
+            SalutationEnum salutaionEnum;
+            switch (profile.Salutation)
+            {
+                case "Mr":
+                    salutaionEnum = SalutationEnum.Mr;
+                    break;
+                case "Mrs":
+                    salutaionEnum = SalutationEnum.Mrs;
+                    break;
+                case "Miss":
+                    salutaionEnum = SalutationEnum.Miss;
+                    break;
+                 default:
+                    salutaionEnum = SalutationEnum.Mr;
+                    break;
+            }
+            return new Models.UserProfile
+            {
+                City = profile.City,
+                Country = countryEnum,
+                Email = profile.Email,
+                FirstName = profile.FirstName,
+                HouseNumber = profile.HouseNumber,
+                LastName = profile.LastName,
+                OAuthMemberships = profile.OAuthMemberships == null ? null : profile.OAuthMemberships.Select(o => new Models.OAuthMembership
+                {
+                    Provider = o.Provider,
+                    ProviderUserId = o.ProviderUserId,
+                    UserId = o.UserId,
+                }).ToList(),
+                Phone = profile.Phone,
+                PhoneMobile = profile.PhoneMobile,
+                PhoneWork = profile.PhoneWork,
+                PostCode = profile.PostCode,
+                //Roles,
+                Salutation = salutaionEnum,
+                Street = profile.Street,
+                MiddleName = profile.Surname, //aware: JWIJ20130206, property difference
+                UserId = profile.UserId,
+                HouseNumberExtension = profile.HouseNumberExtension,
+                IsVerified = profile.IsVerified,
+                IsDirty = profile.IsDirty,
+                ExternalUniqueKey = profile.ExternalUniqueKey
+            };
+        }
+
+        public static void UpdateEntity(this Models.UserProfile profile, Entities.UserProfile target)  //JWIJDE20130201 Mapper function during update..
+        {
+            target.City = profile.City;
+            target.Country = profile.Country.ToString();
+            target.Email = profile.Email;
+            target.FirstName = profile.FirstName;
+            target.HouseNumber = profile.HouseNumber;
+            target.LastName = profile.LastName;
+            target.Phone = profile.Phone;
+            target.PhoneMobile = profile.PhoneMobile;
+            target.PhoneWork = profile.PhoneWork;
+            target.PostCode = profile.PostCode;
+            //target.Roles,
+            target.Salutation = profile.Salutation.ToString();
+            target.Street = profile.Street;
+            target.Surname = profile.MiddleName; //aware: JWIJ20130206, property difference
+            target.UserId = profile.UserId;
+            target.ExternalUniqueKey = profile.ExternalUniqueKey;
+            target.HouseNumberExtension = profile.HouseNumberExtension;
+            target.IsDirty = profile.IsDirty;
+            target.IsVerified = profile.IsVerified;
+        }
     }
+        #endregion
 }

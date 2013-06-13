@@ -1,23 +1,41 @@
 ﻿@using Thinktecture.IdentityServer.Web.App_LocalResources.Shared
-<div class="menu">
+<ul class="nav">
     @if (ViewBag.IsAdministrator)
     {
-        @Html.ActionLink(_Menu_cshtml.Administration, "index", "home", new{area="Admin"}, null)
-        @: &nbsp;
+        <li class="menu-item">
+            @Html.ActionLink(_Menu_cshtml.Administration, "index", "home", new{area="Admin"}, null)
+        </li>
+        
+        <li class="divider-vertical"></li>
     }
         
     @if (ViewBag.IsSignedIn)
-    {
-        @Html.ActionLink(_Menu_cshtml.Home, "index", "home", new{area=""}, null)
-        @: &nbsp;
-        @Html.ActionLink(_Menu_cshtml.SignOut, "signout", "account", new{area=""}, null)
-        @: &nbsp;
-        @:@string.Format(_Menu_cshtml.SignedUser, @Context.User.Identity.Name)
+    { 
+        <li class="menu-item">
+            @Html.ActionLink("My Profile", "myprofile", "account", new{area=""}, null)
+        </li>
+        
+        <li class="divider-vertical"></li>
+        
+        <li class="menu-item">
+            @Html.ActionLink(_Menu_cshtml.SignOut, "signout", "account", new{area=""}, null)
+        </li>
     }
     else
     {
-        @Html.ActionLink(_Menu_cshtml.Home, "index", "home", new{area=""}, null)
-        @: &nbsp;
-        @Html.ActionLink(_Menu_cshtml.SignIn, "signin", "account", new{area=""}, null)
+        <li class="menu-item">
+            @Html.ActionLink(_Menu_cshtml.SignIn, "signin", "account", new{area=""}, null)
+        </li>
     }
+
+    <li class="divider-vertical"></li>
+</ul>
+
+<div class="nav pull-right">
+    <div class="navbar-text">
+        @if (ViewBag.IsSignedIn)
+        {
+            @:(signed in as @Context.User.Identity.Name)
+        }
+    </div>
 </div>

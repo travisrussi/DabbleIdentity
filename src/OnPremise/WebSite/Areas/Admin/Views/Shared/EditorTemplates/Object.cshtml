@@ -1,30 +1,40 @@
 ﻿@using Thinktecture.IdentityServer.Web.Utility
+@using Thinktecture.IdentityServer.DataAnnotationExtention
 
 @{
     foreach(var prop in this.ViewData.ModelMetadata.Properties)
     {
         if (prop.ShowForEdit)
         {
-            <div>
+            string classAtt = "";
+            if(prop.AdditionalValues.Count > 0)
+            {
+               var classPropAtt = prop.AdditionalValues["DivClass"] as HtmlDivClassPropertiesAttribute;
+               classAtt = classPropAtt.divClass;
+            }
+            
+            <div class="control-group @classAtt">
                 @if (prop.TemplateHint == "HiddenInput")
                 {
                     @Html.Hidden(prop.PropertyName, prop.Model)
                 }
                 else
                 {
-                    @Html.Label(prop.PropertyName)
-                    @:
-                    if(prop.IsReadOnly)
-                    {
-                        @Html.Display(prop.PropertyName)
-                    }
-                    else
-                    {
-                        @Html.Editor(prop.PropertyName)
-                        @:
-                        @Html.Validator(prop)
-                        @:
-                    }
+                    
+                    @Html.Label(prop.PropertyName, new { @class = "control-label" })
+                    <div class="controls">
+                        @if(prop.IsReadOnly)
+                        {
+                            @Html.Display(prop.PropertyName)
+                        }
+                        else
+                        {
+                            @Html.Editor(prop.PropertyName)
+                            @:
+                            @Html.Validator(prop)
+                            @:
+                        }
+                    </div>
                 }
             </div>
         }

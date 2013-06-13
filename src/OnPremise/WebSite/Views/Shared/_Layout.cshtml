@@ -3,26 +3,41 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewBag.Title</title>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    @Scripts.Render("~/bundles/js/modernizr")
-    @Styles.Render("~/bundles/css/site")
+    <meta charset="utf-8" />
+    
+    <link type="text/css" rel="stylesheet" href="~/Content/themes/default/Site.less">
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+   
+    <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Scripts/modernizr/js")" type="text/javascript"></script>
+
     @RenderSection("styles", false)
+    @Scripts.Render("~/bundles/js/modernizr")
 </head>
 
-<body>
+<body data-offset="50" data-target=".subnav" data-spy="scroll">
+    <div id="body">
 
-    @Html.Partial("_Banner")
-    @if (!(ViewBag.HideMenu == true))
-    {
-        @Html.Partial("_Menu")
-    }
+        @Html.Partial("_Banner")
 
-    <section id="main-section">
-        @RenderBody()
-    </section>
+        <div id="fb-root"></div>
 
+        <div class="container" id="main-container">
+            <div class="row-fluid">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="navbar navbar-fixed-bottom">
+            <div class="navbar-inner pagination-centered">
+            </div>
+        </div>
+    </footer>
+    
     @Scripts.Render("~/bundles/js/jquery")
+    @Scripts.Render("~/bundles/js/plugins")
     @RenderSection("scripts", false)
 </body>
 </html>

@@ -10,16 +10,16 @@ namespace Thinktecture.IdentityServer.Models
     public class ClientCertificate
     {
         [Required]
-        [Display(ResourceType = typeof (Resources.Models.ClientCertificate), Name = "Description", Description = "DescriptionDescription")]
+        [Display(ResourceType = typeof(Resources.Models.ClientCertificate), Name = "Description", Description = "DescriptionDescription")]
         public string Description { get; set; }
 
         [Required]
-        [Display(ResourceType = typeof (Resources.Models.ClientCertificate), Name = "UserName", Description = "UserNameDescription")]
+        [Display(ResourceType = typeof(Resources.Models.ClientCertificate), Name = "UserName", Description = "UserNameDescription")]
         public string UserName { get; set; }
 
         [UIHint("Thumbprint")]
         [Required]
-        [Display(ResourceType = typeof (Resources.Models.ClientCertificate), Name = "Thumbprint", Description = "ThumbprintDescription")]
+        [Display(ResourceType = typeof(Resources.Models.ClientCertificate), Name = "Thumbprint", Description = "ThumbprintDescription")]
         public string Thumbprint { get; set; }
     }
 }

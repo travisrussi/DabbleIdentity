@@ -11,26 +11,28 @@
         ViewBag.Title = string.Format(RP_cshtml.RelyingParty, Model.Name);
     }
 }
-@using (Html.BeginForm("RP", "RP", new { id = Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("RP", "RP", new { id = Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(RP_cshtml.ErrorUpdatingRelyingParty)
+    @Html.ValidationSummary(RP_cshtml.ErrorUpdatingRelyingParty, new { @class = "alert alert-error" })
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
 
         @Html.EditorForModel()
 
-        <div class="buttons">
-            @if (Model.Id != null)
-            {
-                <button type="submit" name="action" value="save">@RP_cshtml.SaveChanges</button>
-                <button type="submit" name="action" value="delete">@RP_cshtml.Delete</button>
-            }
-            else
-            {
-                <button type="submit" name="action" value="create">@RP_cshtml.Create</button>
-            }
-            <button type="reset">@RP_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                @if (Model.Id != null)
+                {
+                    <button type="submit" name="action" value="save" class="btn btn-large btn-primary">@RP_cshtml.SaveChanges</button>
+                    <button type="submit" name="action" value="delete" class="btn btn-large">@RP_cshtml.Delete</button>
+                }
+                else
+                {
+                    <button type="submit" name="action" value="create" class="btn btn-large">@RP_cshtml.Create</button>
+                }
+                <button type="reset" class="btn btn-large">@RP_cshtml.Cancel</button>
+            </div>
         </div>
     </fieldset>
 }

@@ -14,11 +14,13 @@ using System.Text;
 using System.Xml;
 using Thinktecture.IdentityModel.Constants;
 using Thinktecture.IdentityServer.TokenService;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols
 {
     public class STS
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         SecurityTokenService _sts;
 
         public STS()
@@ -55,7 +57,7 @@ namespace Thinktecture.IdentityServer.Protocols
             }
             catch (Exception e)
             {
-                Tracing.Error("Failed to issue token. An exception occurred. " + e);
+                logger.Error("Failed to issue token. An exception occurred. " + e);
                 return false;
             }
         }

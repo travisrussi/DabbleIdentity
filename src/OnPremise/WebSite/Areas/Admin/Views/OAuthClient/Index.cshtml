@@ -1,14 +1,15 @@
+﻿@using Thinktecture.IdentityServer.Web.Areas.Admin.App_LocalResources.OAuthClient
 @model OAuthClientIndexViewModel
-@using Thinktecture.IdentityServer.Web.Areas.Admin.App_LocalResources.OAuthClient
 
 @{
     ViewBag.Title = Index_cshtml.OAuthClients;
 }
 
-@using (Html.BeginForm())
+
+@using (Html.BeginForm("index", "OAuthClient", FormMethod.Post, new { @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(Index_cshtml.ErrorDeletingClients)
+    @Html.ValidationSummary(Index_cshtml.ErrorDeletingClients, new { @class = "alert alert-error" })
 
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
@@ -17,17 +18,21 @@
         }
         @for (int i = 0; i < list.Length; i++)
         {
-            <div>
-                @Html.HiddenFor(x=>list[i].ID)
-                @Html.LabelFor(x => list[i].Delete, list[i].Name)
-                @Html.CheckBoxFor(x => list[i].Delete)
+            <div class="control-group">
+                @Html.LabelFor(x => list[i].Delete, list[i].Name, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.CheckBoxFor(x => list[i].Delete)
+                    @Html.HiddenFor(x=>list[i].ID)
+                </div>
             </div>
         }
 
-        <div class="buttons">
-            <button type="submit" name="action" value="delete">@Index_cshtml.DeleteSelected</button>
-            <button type="submit" name="action" value="new">@Index_cshtml.New</button>
-            <button type="reset">@Index_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" name="action" value="delete" class="btn btn-large btn-primary">@Index_cshtml.DeleteSelected</button>
+                <button type="submit" name="action" value="new" class="btn btn-large">@Index_cshtml.New</button>
+                <button type="reset" class="btn btn-large">@Index_cshtml.Cancel</button>
+            </div>
         </div>
 
     </fieldset>

@@ -3,12 +3,16 @@
  * see license.txt
  */
 
+
 namespace Thinktecture.IdentityServer.Models
 {
     public enum OAuth2ProviderTypes
     {
         Google = 1,
         Facebook = 2,
-        Live = 3,
+        Microsoft = 3,
+        LinkedIn = 4,
+        Twitter = 5,
+        Yahoo = 6,
     }
 }

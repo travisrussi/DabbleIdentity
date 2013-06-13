@@ -6,12 +6,15 @@ using System.Web.Mvc;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using Thinktecture.IdentityServer.Repositories;
 using Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
 {
     [ClaimsAuthorize(Constants.Actions.Administration, Constants.Resources.Configuration)]
     public class UserController : Controller
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
+
         [Import]
         public IUserManagementRepository UserManagementRepository { get; set; }
 
@@ -23,6 +26,13 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
         public UserController(IUserManagementRepository userManagementRepository)
         {
             UserManagementRepository = userManagementRepository;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Filter(string filter)
+        {
+            return RedirectToAction("Index", new { filter = filter });
         }
 
         public ActionResult Index(string filter = null)
@@ -60,7 +70,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             {
                 try
                 {
-                    this.UserManagementRepository.CreateUser(model.Username, model.Password, model.Email);
+                    this.UserManagementRepository.CreateUser(model.Username, model.Password);
                     if (model.Roles != null)
                     {
                         var roles = model.Roles.Where(x => x.InRole).Select(x => x.Role);
@@ -76,8 +86,9 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
-                catch
+                catch(Exception e)
                 {
+                    logger.LogException(LogLevel.Error, "Error while Creating User", e);
                     ModelState.AddModelError("", Resources.UserController.ErrorCreatingUser);
                 }
             }
@@ -102,34 +113,35 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
-                catch
+                catch (Exception e)
                 {
+                    logger.LogException(LogLevel.Error, "Error while Deleting User", e);
                     ModelState.AddModelError("", Resources.UserController.ErrorDeletingUser);
                 }
             }
             return Index();
         }
 
-        public ActionResult Roles(string id)
+        public ActionResult Roles(string username)
         {
-            var vm = new UserRolesViewModel(this.UserManagementRepository, id);
+            var vm = new UserRolesViewModel(this.UserManagementRepository, username);
             return View("Roles", vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Roles(string id, UserRoleAssignment[] roleAssignments)
+        public ActionResult Roles(string username, UserRoleAssignment[] roleAssignments)
         {
-            var vm = new UserRolesViewModel(this.UserManagementRepository, id);
+            var vm = new UserRolesViewModel(this.UserManagementRepository, username);
             if (ModelState.IsValid)
             {
                 try
                 {
                     var currentRoles =
                         roleAssignments.Where(x => x.InRole).Select(x => x.Role);
-                    this.UserManagementRepository.SetRolesForUser(id, currentRoles);
+                    this.UserManagementRepository.SetRolesForUser(username, currentRoles);
                     TempData["Message"] = Resources.UserController.RolesAssignedSuccessfully;
-                    return RedirectToAction("Roles", new { id });
+                    return RedirectToAction("Roles", new { username });
                 }
                 catch (ValidationException ex)
                 {
@@ -144,57 +156,58 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             return View("Roles", vm);
         }
 
-        public new ActionResult Profile(string id)
+        [Authorize]
+        public ActionResult Profile(string id)
         {
-            var vm = new UserProfileViewModel(id);
-            return View(vm);
-        }
-        
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public new ActionResult Profile(string id, ProfilePropertyInputModel[] profileValues)
-        {
-            var vm = new UserProfileViewModel(id, profileValues);
-
-            if (vm.UpdateProfileFromValues(ModelState))
+            try
             {
-                TempData["Message"] = Resources.UserController.ProfileUpdated;
-                return RedirectToAction("Profile", new { id });
-            }
-
-            return View(vm);
-        }
-
-        public ActionResult ChangePassword(string id)
-        {
-            UserPasswordModel model = new UserPasswordModel();
-            model.Username = id;
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ChangePassword(UserPasswordModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
+                //not needed authorize 
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    this.UserManagementRepository.SetPassword(model.Username, model.Password);
-                    TempData["Message"] = Resources.UserController.ProfileUpdated;
-                    return RedirectToAction("Index");
-                }
-                catch (ValidationException ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
-                }
-                catch
-                {
-                    ModelState.AddModelError("", "Error updating password");
+                    var profile = UserManagementRepository.GetByUsername(id);
+                    return View(profile);
                 }
             }
-            
-            return View("ChangePassword", model);
+            catch (Exception ex)
+            {
+                //todo: logging.
+                logger.LogException(LogLevel.Error, "An error occured during opening the myprofile page: ", ex);
+                System.Diagnostics.Debug.WriteLine("An error occured during opening the myprofile page : {0}", ex.Message);
+            }
+
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.Unauthorized);
         }
+
+        //public ActionResult ChangePassword(string username)
+        //{
+        //    UserPasswordModel model = new UserPasswordModel();
+        //    model.Username = username;
+        //    return View(model);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult ChangePassword(UserPasswordModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            this.UserManagementRepository.SetPassword(model.Username, model.Password);
+        //            TempData["Message"] = Resources.UserController.ProfileUpdated;
+        //            return RedirectToAction("Index");
+        //        }
+        //        catch (ValidationException ex)
+        //        {
+        //            ModelState.AddModelError("", ex.Message);
+        //        }
+        //        catch
+        //        {
+        //            ModelState.AddModelError("", "Error updating password");
+        //        }
+        //    }
+
+        //    return View("ChangePassword", model);
+        //}
     }
 }

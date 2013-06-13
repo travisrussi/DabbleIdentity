@@ -13,11 +13,14 @@ using System.Web.Http;
 using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols.OAuth2
 {
     public class OAuth2TokenController : ApiController
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
+
         [Import]
         public IUserRepository UserRepository { get; set; }
 
@@ -45,13 +48,13 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
 
         public HttpResponseMessage Post([FromBody] TokenRequest tokenRequest)
         {
-            Tracing.Information("OAuth2 endpoint called.");
+            logger.Info("OAuth2 endpoint called.");
 
             Client client = null;
             var error = ValidateRequest(tokenRequest, out client);
             if (error != null) return error;
 
-            Tracing.Information("Client: " + client.Name);
+            logger.Info("Client: " + client.Name);
 
             // read token type from configuration (typically JWT)
             var tokenType = ConfigurationRepository.Global.DefaultHttpTokenType;
@@ -70,18 +73,18 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
                 return ProcessRefreshTokenRequest(client, tokenRequest.Refresh_Token, tokenType);
             }
 
-            Tracing.Error("invalid grant type: " + tokenRequest.Grant_Type);
+            logger.Error("invalid grant type: " + tokenRequest.Grant_Type);
             return OAuthErrorResponseMessage(OAuth2Constants.Errors.UnsupportedGrantType);
         }
 
         private HttpResponseMessage ProcessResourceOwnerCredentialRequest(TokenRequest request, string tokenType, Client client)
         {
-            Tracing.Information("Starting resource owner password credential flow for client: " + client.Name);
+            logger.Info("Starting resource owner password credential flow for client: " + client.Name);
             var appliesTo = new EndpointReference(request.Scope);
 
             if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
             {
-                Tracing.Error("Invalid resource owner credentials for: " + appliesTo.Uri.AbsoluteUri);
+                logger.Error("Invalid resource owner credentials for: " + appliesTo.Uri.AbsoluteUri);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
@@ -91,20 +94,20 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             }
             else
             {
-                Tracing.Error("Resource owner credential validation failed: " + request.UserName);
+                logger.Error("Resource owner credential validation failed: " + request.UserName);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
         }
 
         private HttpResponseMessage ProcessAuthorizationCodeRequest(Client client, string code, string tokenType)
         {
-            Tracing.Information("Processing authorization code token request for client: " + client.Name);
+            logger.Info("Processing authorization code token request for client: " + client.Name);
             return ProcessCodeTokenRequest(client, code, tokenType);
         }
-        
+
         private HttpResponseMessage ProcessRefreshTokenRequest(Client client, string refreshToken, string tokenType)
         {
-            Tracing.Information("Processing refresh token request for client: " + client.Name);
+            logger.Info("Processing refresh token request for client: " + client.Name);
             return ProcessCodeTokenRequest(client, refreshToken, tokenType);
         }
 
@@ -114,19 +117,20 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             CodeToken token;
             if (CodeTokenRepository.TryGetCode(codeToken, out token))
             {
+                CodeTokenRepository.DeleteCode(token.Code);
+
                 // 2. make sure the client is the same - if not: error
                 if (token.ClientId == client.ID)
                 {
                     // 3. call STS 
-                    CodeTokenRepository.DeleteCode(token.Code);
                     return CreateTokenResponse(token.UserName, client, new EndpointReference(token.Scope), tokenType, includeRefreshToken: client.AllowRefreshToken);
                 }
 
-                Tracing.Error("Invalid client for refresh token. " + client.Name + " / " + codeToken);
+                logger.Error("Invalid client for refresh token. " + client.Name + " / " + codeToken);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
-            Tracing.Error("Refresh token not found. " + client.Name + " / " + codeToken);
+            logger.Error("Refresh token not found. " + client.Name + " / " + codeToken);
             return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
         }
 
@@ -143,7 +147,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
 
             if (!ClaimsAuthorization.CheckAccess(principal, Constants.Actions.Issue, Constants.Resources.OAuth2))
             {
-                Tracing.Error("OAuth2 endpoint authorization failed for user: " + userName);
+                logger.Error("OAuth2 endpoint authorization failed for user: " + userName);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
@@ -200,16 +204,16 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
                 Uri appliesTo;
                 if (!Uri.TryCreate(request.Scope, UriKind.Absolute, out appliesTo))
                 {
-                    Tracing.Error("Malformed scope: " + request.Scope);
+                    logger.Error("Malformed scope: " + request.Scope);
                     return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidScope);
                 }
-                
-                Tracing.Information("OAuth2 endpoint called for scope: " + request.Scope);
+
+                logger.Info("OAuth2 endpoint called for scope: " + request.Scope);
             }
 
             if (!ValidateClient(out client))
             {
-                Tracing.Error("Invalid client: " + ClaimsPrincipal.Current.Identity.Name);
+                logger.Error("Invalid client: " + ClaimsPrincipal.Current.Identity.Name);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidClient);
             }
 
@@ -219,6 +223,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
                 if (!ConfigurationRepository.OAuth2.EnableCodeFlow ||
                     !client.AllowCodeFlow)
                 {
+                    logger.Error("Code flow not allowed for client");
                     return OAuthErrorResponseMessage(OAuth2Constants.Errors.UnsupportedGrantType);
                 }
             }
@@ -228,6 +233,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
                 if (!ConfigurationRepository.OAuth2.EnableResourceOwnerFlow ||
                     !client.AllowResourceOwnerFlow)
                 {
+                    logger.Error("Resource owner password flow not allowed for client");
                     return OAuthErrorResponseMessage(OAuth2Constants.Errors.UnsupportedGrantType);
                 }
             }
@@ -236,6 +242,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             {
                 if (!client.AllowRefreshToken)
                 {
+                    logger.Error("Refresh tokens not allowed for client");
                     return OAuthErrorResponseMessage(OAuth2Constants.Errors.UnsupportedGrantType);
                 }
             }
@@ -249,14 +256,14 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
 
             if (!ClaimsPrincipal.Current.Identity.IsAuthenticated)
             {
-                Tracing.Error("Anonymous client.");
+                logger.Error("Anonymous client.");
                 return false;
             }
 
             var passwordClaim = ClaimsPrincipal.Current.FindFirst("password");
             if (passwordClaim == null)
             {
-                Tracing.Error("No client secret provided.");
+                logger.Error("No client secret provided.");
                 return false;
             }
 

@@ -28,7 +28,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var vm = this.ConfigurationRepository.Diagnostics;
             return View(vm);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(DiagnosticsConfiguration model)

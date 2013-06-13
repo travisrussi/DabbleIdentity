@@ -1,0 +1,41 @@
+﻿
+@model  Thinktecture.IdentityServer.Web.ViewModels.RegisterModel
+@{
+    ViewBag.Title = "Register";
+}
+<script type="text/javascript" src="~/Scripts/jquery.pstrength-min.1.2.js"></script>
+<script type="text/javascript">
+    $(function() {
+        $(document.getElementById("Password")).pstrength();
+    });
+</script>
+<div class="span6">
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("Registration failed. Please correct the errors and try again.", new { @class = "alert alert-error" })
+
+        <fieldset>
+            <legend>Registration Form</legend>
+                <div>
+                    @Html.TextBoxFor(m => m.Email, 
+                        new { @placeholder=Html.DisplayNameFor(m => m.Email) })
+                </div>
+                <div>
+                    @Html.PasswordFor(m => m.Password, 
+                        new { @placeholder=Html.DisplayNameFor(m => m.Password) })
+                </div>
+                <div>
+                    @Html.PasswordFor(m => m.ConfirmPassword, 
+                        new { @placeholder=Html.DisplayNameFor(m => m.ConfirmPassword) })
+                </div>
+            <button type="submit" class="btn btn-large btn-primary">Register</button>
+        </fieldset>    }
+
+</div>
+<div class="span6">
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

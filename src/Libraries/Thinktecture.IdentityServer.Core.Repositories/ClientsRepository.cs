@@ -5,9 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Thinktecture.IdentityModel;
 
 namespace Thinktecture.IdentityServer.Repositories.Sql
 {
@@ -70,7 +68,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
                 return false;
             }
         }
-        
+
         public IEnumerable<Models.Client> GetAll()
         {
             using (var entities = IdentityServerConfigurationContext.Get())

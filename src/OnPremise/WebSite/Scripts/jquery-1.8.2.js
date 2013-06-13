@@ -1,3 +1,5 @@
+//ignore jslint start
+
 /*!
  * jQuery JavaScript Library v1.8.2
  * http://jquery.com/
@@ -9438,3 +9440,5 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 }
 
 })( window );
+
+//ignore jslint end

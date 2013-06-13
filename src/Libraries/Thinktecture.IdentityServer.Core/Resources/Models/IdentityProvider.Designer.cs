@@ -70,15 +70,6 @@ namespace Thinktecture.IdentityServer.Resources.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string ClientIDDescription {
-            get {
-                return ResourceManager.GetString("ClientIDDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Client ID is required..
         /// </summary>
         public static string ClientIDRequiredError {
@@ -93,15 +84,6 @@ namespace Thinktecture.IdentityServer.Resources.Models {
         public static string ClientSecret {
             get {
                 return ResourceManager.GetString("ClientSecret", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string ClientSecretDescription {
-            get {
-                return ResourceManager.GetString("ClientSecretDescription", resourceCulture);
             }
         }
         
@@ -196,6 +178,15 @@ namespace Thinktecture.IdentityServer.Resources.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OpenId Provider.
+        /// </summary>
+        public static string OpenIdProvider {
+            get {
+                return ResourceManager.GetString("OpenIdProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OAuth2 Provider.
         /// </summary>
         public static string ProviderType {
@@ -205,20 +196,29 @@ namespace Thinktecture.IdentityServer.Resources.Models {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string ProviderTypeDescription {
-            get {
-                return ResourceManager.GetString("ProviderTypeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Profile Type is required..
         /// </summary>
         public static string ProviderTypeRequiredError {
             get {
                 return ResourceManager.GetString("ProviderTypeRequiredError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scope.
+        /// </summary>
+        public static string Scope {
+            get {
+                return ResourceManager.GetString("Scope", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Scope let you specify exactly what type of access you need.
+        /// </summary>
+        public static string ScopeDescription {
+            get {
+                return ResourceManager.GetString("ScopeDescription", resourceCulture);
             }
         }
         

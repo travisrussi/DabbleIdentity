@@ -39,7 +39,7 @@ namespace Thinktecture.IdentityServer.Protocols
                 FederatedAuthentication.SessionAuthenticationModule.DeleteSessionTokenCookie();
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Signin", "Account");
         }
 
         #region Private
@@ -56,11 +56,11 @@ namespace Thinktecture.IdentityServer.Protocols
             {
                 return RedirectToLocal(returnUrl);
             }
-
-            return RedirectToAction("Index", "Home");
+            ViewBag.IsSignedIn = true;
+            return RedirectToAction("myprofile", "account");
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
+        public ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
@@ -68,7 +68,7 @@ namespace Thinktecture.IdentityServer.Protocols
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Signin", "Account");
             }
         }
         #endregion

@@ -33,7 +33,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var vm = new ClientCertificatesViewModel(this.clientCertificatesRepository);
             return View(vm);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(string action, ClientCertificateUserInputModel[] users)
@@ -92,7 +92,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     ModelState["newCertificate.Thumbprint"].Value = new ValueProviderResult(newCertificate.Thumbprint, newCertificate.Thumbprint, ModelState["newCertificate.Thumbprint"].Value.Culture);
                 }
             }
-            
+
             if (ModelState.IsValid)
             {
                 try

@@ -1,33 +1,39 @@
 ﻿@using Thinktecture.IdentityServer.Web.Areas.Admin.App_LocalResources.IP
 @model IdentityProvidersViewModel
 
+
 @{
     ViewBag.Title = Index_cshtml.IdentityProviders;
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("index", "IP", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(Index_cshtml.ErrorDeletingIdentityProviders)
+    @Html.ValidationSummary(Index_cshtml.ErrorDeletingIdentityProviders, new { @class = "alert alert-error" })
 
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
         @{
-            var list = Model.IdentityProviders;
+    var list = Model.IdentityProviders;
         }
         @for (int i = 0; i < list.Length; i++)
         {
-            <div>
-                @Html.HiddenFor(x=>list[i].ID)
-                @Html.LabelFor(x => list[i].Delete, list[i].Name)
-                @Html.CheckBoxFor(x => list[i].Delete)
+            <div class="control-group">
+                
+                @Html.HiddenFor(x => list[i].ID)
+                <div class="controls">
+                    @Html.LabelFor(x => list[i].Delete, list[i].Name)
+                    @Html.CheckBoxFor(x => list[i].Delete)
+                </div>
             </div>
         }
 
-        <div class="buttons">
-            <button type="submit" name="action" value="delete">@Index_cshtml.DeleteSelected</button>
-            <button type="submit" name="action" value="new">@Index_cshtml.New</button>
-            <button type="reset">@Index_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" name="action" value="delete" class="btn btn-large btn-primary">@Index_cshtml.DeleteSelected</button>
+                <button type="submit" name="action" value="new" class="btn btn-large">@Index_cshtml.New</button>
+                <button type="reset" class="btn btn-large">@Index_cshtml.Cancel</button>
+            </div>
         </div>
 
     </fieldset>

@@ -1,0 +1,32 @@
+﻿@model Thinktecture.IdentityServer.Protocols.WSFederation.HrdViewModel
+@if(Model.Providers.Any())
+{
+    <div class="span6">
+        <div class="well secondary">
+            <legend>Select one of these to login:</legend>
+            <div class="breath-v">
+    @using (Html.BeginForm("Select", "HRD", FormMethod.Post, new {area = ""}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.OriginalSigninUrl)
+    
+         <ul class="openid_btns breath-v row-fluid">
+            @foreach (var provider in Model.Providers)
+            {
+                <li class="span4">
+                    <button type="submit" name="idp" value="@provider.ID" class="@provider.ID.ToLower() openid_large_btn">@provider.DisplayName</button>
+                </li>
+            }
+        </ul>
+   
+        <!--div>
+            @Html.LabelFor(x => x.RememberHRDSelection)
+            @Html.CheckBoxFor(x => x.RememberHRDSelection)    
+        </div-->
+    }
+
+
+            </div>
+        </div>
+    </div>
+}

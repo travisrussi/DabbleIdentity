@@ -1,3 +1,5 @@
+//ignore jslint start
+
 /*
 * This file has been commented to support Visual Studio Intellisense.
 * You should not use this file at runtime inside the browser--it is only
@@ -1289,3 +1291,5 @@ $.format = $.validator.format;
 		}
 	});
 })(jQuery);
+
+//ignore jslint end

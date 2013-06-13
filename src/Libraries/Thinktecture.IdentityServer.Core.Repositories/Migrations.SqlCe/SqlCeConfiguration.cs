@@ -1,5 +1,7 @@
 namespace Thinktecture.IdentityServer.Core.Repositories.Migrations.SqlCe
 {
+    using System;
+    using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 

@@ -49,7 +49,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
             }
             catch
             {
-                errors.Add(new ValidationResult(Resources.CertificateInputModel.ErrorProcessingCertificate, new string[]{Name}));
+                errors.Add(new ValidationResult(Resources.CertificateInputModel.ErrorProcessingCertificate, new string[] { Name }));
             }
             return errors;
         }

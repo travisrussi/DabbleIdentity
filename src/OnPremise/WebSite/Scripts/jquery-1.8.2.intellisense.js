@@ -1,4 +1,7 @@
-intellisense.annotate(jQuery, {
+//ignore jslint start
+
+
+intellisense.annotate( jQuery, {
   'ajax': function() {
     /// <signature>
     ///   <summary>Perform an asynchronous HTTP (Ajax) request.</summary>
@@ -2492,3 +2495,4 @@ intellisense.annotate(window, {
   },
 });
 
+//ignore jslint end

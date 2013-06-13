@@ -8,11 +8,14 @@ using System.Web.Http;
 using Thinktecture.IdentityModel.Extensions;
 using Thinktecture.IdentityServer.Protocols.OAuth2;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
 {
     public class AdfsController : ApiController
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
+
         [Import]
         public IConfigurationRepository ConfigurationRepository { get; set; }
 
@@ -37,7 +40,7 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
             if (string.IsNullOrEmpty(request.Scope) ||
                 !Uri.TryCreate(request.Scope, UriKind.Absolute, out uri))
             {
-                Tracing.Error("Starting ADFS integration request with invalid scope: " + request.Scope);
+                logger.Error("Starting ADFS integration request with invalid scope: " + request.Scope);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidScope);
             }
 
@@ -61,7 +64,7 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
                 return ProcessJwtRequest(request);
             }
 
-            Tracing.Error("Unsupported grant type: " + request.Grant_Type);
+            logger.Error("Unsupported grant type: " + request.Grant_Type);
             return OAuthErrorResponseMessage(OAuth2Constants.Errors.UnsupportedGrantType);
         }
 
@@ -70,28 +73,28 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
         {
             if (string.IsNullOrEmpty(request.Assertion))
             {
-                Tracing.Error("ADFS integration authentication request (JWT) with empty assertion");
+                logger.Error("ADFS integration authentication request (JWT) with empty assertion");
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
-            Tracing.Information("Starting ADFS integration authentication request (JWT) for scope: " + request.Scope);
+            logger.Info("Starting ADFS integration authentication request (JWT) for scope: " + request.Scope);
 
             var bridge = new AdfsBridge(ConfigurationRepository);
             GenericXmlSecurityToken token;
             try
             {
-                Tracing.Verbose("Starting ADFS integration authentication request (JWT) for assertion: " + request.Assertion);
+                logger.Info("Starting ADFS integration authentication request (JWT) for assertion: " + request.Assertion);
 
                 token = bridge.AuthenticateJwt(request.Assertion, request.Scope);
             }
             catch (Exception ex)
             {
-                Tracing.Error("Error while communicating with ADFS: " + ex.ToString());
+                logger.Error("Error while communicating with ADFS: " + ex.ToString());
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidRequest);
             }
 
             var response = CreateTokenResponse(token, request.Scope);
-            Tracing.Verbose("ADFS integration JWT authentication successful");
+            logger.Info("ADFS integration JWT authentication successful");
 
             return response;
         }
@@ -102,7 +105,7 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
         {
             if (string.IsNullOrEmpty(request.Assertion))
             {
-                Tracing.Error("ADFS integration SAML authentication request with empty assertion");
+                logger.Error("ADFS integration SAML authentication request with empty assertion");
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
@@ -114,28 +117,28 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
             }
             catch
             {
-                Tracing.Error("ADFS integration SAML authentication request with malformed SAML assertion: " + request.Assertion);
+                logger.Error("ADFS integration SAML authentication request with malformed SAML assertion: " + request.Assertion);
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
-            Tracing.Information("Starting ADFS integration SAML authentication request for scope: " + request.Scope);
+            logger.Info("Starting ADFS integration SAML authentication request for scope: " + request.Scope);
 
             var bridge = new AdfsBridge(ConfigurationRepository);
             GenericXmlSecurityToken token;
             try
             {
-                Tracing.Verbose("ADFS integration SAML authentication request for assertion: " + request.Assertion);
+                logger.Info("ADFS integration SAML authentication request for assertion: " + request.Assertion);
 
                 token = bridge.AuthenticateSaml(incomingSamlToken, request.Scope);
             }
             catch (Exception ex)
             {
-                Tracing.Error("Error while communicating with ADFS: " + ex.ToString());
+                logger.Error("Error while communicating with ADFS: " + ex.ToString());
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidRequest);
             }
 
             var response = CreateTokenResponse(token, request.Scope);
-            Tracing.Verbose("ADFS integration SAML authentication request successful");
+            logger.Info("ADFS integration SAML authentication request successful");
 
             return response;
         }
@@ -147,17 +150,17 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
             if (string.IsNullOrEmpty(request.UserName) ||
                 string.IsNullOrEmpty(request.Password))
             {
-                Tracing.Error("ADFS integration username authentication request with empty username or password");
+                logger.Error("ADFS integration username authentication request with empty username or password");
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidGrant);
             }
 
-            Tracing.Information("Starting ADFS integration username authentication request for scope: " + request.Scope);
+            logger.Info("Starting ADFS integration username authentication request for scope: " + request.Scope);
 
             var bridge = new AdfsBridge(ConfigurationRepository);
             GenericXmlSecurityToken token;
             try
             {
-                Tracing.Verbose("ADFS integration username authentication request for user: " + request.UserName);
+                logger.Info("ADFS integration username authentication request for user: " + request.UserName);
 
                 token = bridge.AuthenticateUserName(
                     request.UserName, 
@@ -166,12 +169,12 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
             }
             catch (Exception ex)
             {
-                Tracing.Error("Error while communicating with ADFS: " + ex.ToString());
+                logger.Error("Error while communicating with ADFS: " + ex.ToString());
                 return OAuthErrorResponseMessage(OAuth2Constants.Errors.InvalidRequest);
             }
 
             var response = CreateTokenResponse(token, request.Scope);
-            Tracing.Verbose("ADFS integration username authentication request successful");
+            logger.Info("ADFS integration username authentication request successful");
 
             return response;
         }

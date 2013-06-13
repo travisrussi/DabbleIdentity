@@ -10,7 +10,7 @@ namespace Thinktecture.IdentityServer.Models.Configuration
 {
     public class DiagnosticsConfiguration
     {
-        [Display(ResourceType = typeof (Resources.Models.Configuration.DiagnosticsConfiguration), Name = "EnableFederationMessageTracing", Description = "EnableFederationMessageTracingDescription")]
+        [Display(ResourceType = typeof(Resources.Models.Configuration.DiagnosticsConfiguration), Name = "EnableFederationMessageTracing", Description = "EnableFederationMessageTracingDescription")]
         public Boolean EnableFederationMessageTracing { get; set; }
     }
 }

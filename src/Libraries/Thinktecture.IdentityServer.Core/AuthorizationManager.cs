@@ -10,11 +10,13 @@ using System.Security.Claims;
 using Thinktecture.IdentityModel.Authorization;
 using Thinktecture.IdentityModel.Constants;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer
 {
     public class AuthorizationManager : ClaimsAuthorizationManager
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         [Import]
         public IConfigurationRepository ConfigurationRepository { get; set; }
 
@@ -68,7 +70,7 @@ namespace Thinktecture.IdentityServer
                 var authResult = id.IsAuthenticated;
                 if (!authResult)
                 {
-                    Tracing.Error("Authorization for token issuance failed because the user is anonymous");
+                    logger.Error("Authorization for token issuance failed because the user is anonymous");
                 }
 
                 return authResult;
@@ -77,7 +79,7 @@ namespace Thinktecture.IdentityServer
             var roleResult = id.HasClaim(ClaimTypes.Role, Constants.Roles.IdentityServerUsers);
             if (!roleResult)
             {
-                Tracing.Error(string.Format("Authorization for token issuance failed because user {0} is not in the {1} role", id.Name, Constants.Roles.IdentityServerUsers));
+                logger.Error(string.Format("Authorization for token issuance failed because user {0} is not in the {1} role", id.Name, Constants.Roles.IdentityServerUsers));
             }
 
             return roleResult;
@@ -90,7 +92,7 @@ namespace Thinktecture.IdentityServer
             {
                 if (resource[0].Value != Constants.Resources.UI)
                 {
-                    Tracing.Error(string.Format("Administration authorization failed because user {0} is not in the {1} role", id.Name, Constants.Roles.IdentityServerAdministrators));
+                    logger.Error(string.Format("Administration authorization failed because user {0} is not in the {1} role", id.Name, Constants.Roles.IdentityServerAdministrators));
                 }
             }
 

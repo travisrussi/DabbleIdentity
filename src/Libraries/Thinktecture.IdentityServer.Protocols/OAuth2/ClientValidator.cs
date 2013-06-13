@@ -28,7 +28,7 @@
 
 //            if (!success)
 //            {
-//                Tracing.Error("Invalid client: " + clientId);
+//                logger.Error("Invalid client: " + clientId);
             
 //                throw new AuthenticationException
 //                {

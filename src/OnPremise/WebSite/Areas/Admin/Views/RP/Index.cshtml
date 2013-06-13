@@ -5,10 +5,10 @@
     ViewBag.Title = Index_cshtml.EnabledRelyingParties;
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("index", "RP", FormMethod.Post, new { @class = "form-horizontal" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary(Index_cshtml.ErrorUpdatingRelyingParties)
+    @Html.ValidationSummary(Index_cshtml.ErrorUpdatingRelyingParties, new { @class = "alert alert-error" })
 
     <fieldset class="editor">
         <legend>@ViewBag.Title</legend>
@@ -17,17 +17,21 @@
         }
         @for (int i = 0; i < list.Length; i++)
         {
-            <div>
-                @Html.HiddenFor(x=>list[i].ID)
-                @Html.LabelFor(x => list[i].Enabled, list[i].DisplayName)
-                @Html.CheckBoxFor(x=>list[i].Enabled)
+            <div class="control-group">
+                @Html.LabelFor(x => list[i].Enabled, list[i].DisplayName, new { @class = "control-label" })
+                <div class="controls">
+                    @Html.HiddenFor(x=>list[i].ID)
+                    @Html.CheckBoxFor(x=>list[i].Enabled)
+                </div>
             </div>
         }
 
-        <div class="buttons">
-            <button type="submit" name="action" value="save">@Index_cshtml.SaveChanges</button>
-            <button type="submit" name="action" value="new">@Index_cshtml.New</button>
-            <button type="reset">@Index_cshtml.Cancel</button>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" name="action" value="save" class="btn btn-large btn-primary">@Index_cshtml.SaveChanges</button>
+                <button type="submit" name="action" value="new" class="btn btn-large">@Index_cshtml.New</button>
+                <button type="reset" class="btn btn-large">@Index_cshtml.Cancel</button>
+            </div>
         </div>
 
     </fieldset>

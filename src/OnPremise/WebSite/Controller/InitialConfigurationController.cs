@@ -13,10 +13,13 @@ using System.Security.Principal;
 using System.Web.Mvc;
 using Thinktecture.IdentityModel;
 using Thinktecture.IdentityServer.Repositories;
+using Thinktecture.IdentityServer.Web.GlobalFilter;
 using Thinktecture.IdentityServer.Web.ViewModels;
+using WebMatrix.WebData;
 
 namespace Thinktecture.IdentityServer.Web.Controllers
 {
+    [InitializeSimpleMembership]
     public class InitialConfigurationController : Controller
     {
         [Import]
@@ -40,7 +43,8 @@ namespace Thinktecture.IdentityServer.Web.Controllers
         {
             if (ConfigurationRepository.Keys.SigningCertificate != null)
             {
-                return RedirectToAction("index", "home");
+                ViewBag.DisplayInfoMessage = true;
+                return RedirectToAction("Signin", "Account");
             }
 
             var model = new InitialConfigurationModel
@@ -58,7 +62,7 @@ namespace Thinktecture.IdentityServer.Web.Controllers
         {
             if (ConfigurationRepository.Keys.SigningCertificate != null)
             {
-                return RedirectToAction("index", "home");
+                return RedirectToAction("Signin", "Account");
             }
 
             if (ModelState.IsValid)
@@ -87,10 +91,10 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                 try
                 {
                     var cert = X509.LocalMachine.My.SubjectDistinguishedName.Find(model.SigningCertificate, false).First();
-                    
+
                     // make sure we can access the private key
                     var pk = cert.PrivateKey;
-                    
+
                     keys.SigningCertificate = cert;
                 }
                 catch (CryptographicException)
@@ -104,13 +108,12 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                 {
                     keys.SymmetricSigningKey = Convert.ToBase64String(CryptoRandom.CreateRandomKey(32));
                 }
-                
+
                 // updates key material config
                 ConfigurationRepository.Keys = keys;
 
 
-                
-                return RedirectToAction("index", "home");
+                return RedirectToAction("Signin", "Account");
             }
 
             ModelState.AddModelError("", Resources.InitialConfigurationController.ErrorsOcurred);
@@ -148,7 +151,8 @@ namespace Thinktecture.IdentityServer.Web.Controllers
 
             try
             {
-                UserManagement.CreateUser(userName, password);
+                WebSecurity.CreateUserAndAccount(userName, password, new { Email = userName, IsDirty = true, IsVerified = false });
+                //UserManagement.CreateUser(userName, password);
             }
             catch (Exception ex)
             {

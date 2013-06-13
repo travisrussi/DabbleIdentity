@@ -1,46 +1,158 @@
-﻿@model UserProfileViewModel
-@using Thinktecture.IdentityServer.Web.Areas.Admin.App_LocalResources.User
-@using Thinktecture.IdentityServer.Web.Utility
+﻿@model Thinktecture.IdentityServer.Models.UserProfile
 
 @{
-    ViewBag.Title = string.Format(Profile_cshtml.Profile, Model.Username);
+    ViewBag.Title = ViewBag.SiteName;
 }
 
-<h1>@ViewBag.Title</h1>
-@if (Model.ProfileValues == null || Model.ProfileValues.Length == 0)
-{
-    <p>@Profile_cshtml.NoProfilePropertiesAvailable</p>
-}
-else
-{
-    using(Html.BeginForm())
-    {
-        @Html.ValidationSummary(Profile_cshtml.ErrorsUpdatingProfile)
-        @Html.AntiForgeryToken()
 
-        <fieldset class="editor small">
-            @for (int i = 0; i < Model.ProfileValues.Length; i++)
-            {
-                var prop = Model.ProfileValues[i].Data;
-                <div>
-                    <label for="@prop.Name">@prop.Name</label>
-                    <input type="hidden" name="profileValues[@i].name" value="@prop.Name" />
-                    @if (Model.ProfileValues[i].Type == ProfilePropertyViewModel.ProfilePropertyType.Boolean)
-                    {
-                        var isChecked = Convert.ToBoolean(prop.Value);
-                        <input type="checkbox" id="@prop.Name" checked="@isChecked" name="profileValues[@i].value" value="true" />
-                        <input hidden type="checkbox" id="@prop.Name" checked name="profileValues[@i].value" value="false" />
-                    }
-                    else
-                    {
-                        <input id="@prop.Name" name="profileValues[@i].value" value="@prop.Value" />
-                    }
-                    @Html.Validator("profileValues["+i+"].value", Model.ProfileValues[i].Description)
-                </div>
-            }
-            <div class="buttons">
-                <button>@Profile_cshtml.Save</button>
-            </div>
-        </fieldset>
-    }
-}
+
+            @Html.HiddenFor(m => m.UserId)
+
+				<div class="row-fluid">
+					<div class="span4">
+						<div class="controls-row">
+							<label class="control-label">E-mailadres</label>
+							<div class="input-prepend">
+                                                   
+                    @*@Html.ActionLink("request Email Change", "RequestEmailChange")*@
+								<span class="add-on left"><i class="icon-envelope"></i></span>
+                                 @Html.TextBoxFor(m => m.Email, new { @placeholder = "name@example.com", @required = "", @readonly = "true"})
+								<span class="add-on right"><i class="icon-required"></i></span>
+							</div>
+						</div>
+						<div class="controls-row">
+							<label class="control-label">Aanhef</label>
+							<div class="input-prepend">
+								<span class="add-on left"><i class="icon-gender"></i></span>
+                                @Html.EditorFor(m => m.Salutation, "Enum")
+								<span class="add-on right"><i class="icon-required"></i></span>
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Voornaam</label>
+							<div class="input-prepend">
+								<span class="add-on left"><i class="icon-user"></i></span>
+                                 @Html.TextBoxFor(m => m.FirstName, new { required = "", maxlength = "50", data_hint = "Maximaal<br/>50 tekens" })
+								@*<input type="text" required maxlength="50" placeholder="" title="" data-hint="Maximaal<br/>50 tekens">*@
+								<span class="add-on right"><i class="icon-required"></i></span>
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Tussenvoegsel</label>
+							<div class="input-prepend">
+								<span class="add-on left"><i class="icon-user"></i></span>
+                                 @Html.TextBoxFor(m => m.MiddleName, new { maxlength = "50", placeholder = "", data_hint = "Maximaal<br/>50 tekens" })
+								@*<input type="text" maxlength="50" placeholder="">*@
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Achternaam</label>
+							<div class="input-prepend">
+								<span class="add-on left"><i class="icon-user"></i></span>
+                                 @Html.TextBoxFor(m => m.LastName, new { required = "", maxlength = "50", data_hint = "Maximaal<br/>50 tekens" })
+								@*<input type="text" required maxlength="50" placeholder="" title="" data-hint="Maximaal<br/>50 tekens">*@
+								<span class="add-on right"><i class="icon-required"></i></span>
+							</div>
+						</div>
+
+                      <div class="controls-row">
+							<label class="control-label">CRM ID</label>
+							<div class="input-prepend">
+								<span class="add-on left"><i class="icon-warning-sign"></i></span>
+                                 @Html.TextBoxFor(m => m.ExternalUniqueKey, new { maxlength = "50", @readonly = "true"})
+								@*<input type="text" required maxlength="50" placeholder="" title="" data-hint="Maximaal<br/>50 tekens">*@
+								<span class="add-on right"><i class="icon-required"></i></span>
+							</div>
+						</div>
+
+					</div>
+					<div class="span4">
+						<div class="controls-row-fluid">
+							<div class="row-fluid">
+								<div class="span4">
+									<label class="control-label">Postcode</label>
+									<div class="input-prepend full-width">
+										<span class="add-on left"><i class="icon-region"></i></span>
+                                         @Html.TextBoxFor(m => m.PostCode, new { @id = "postalcode", @required = "", @pattern = "[1-9][0-9]{3}[\\s]?[a-z|A-Z]{2}", @placeholder = "1506DA", data_hint = "Verplicht veld,<br/>Valide postcode" })
+										@*<input type="text" id="postalcode" required pattern="[1-9][0-9]{3}[\s]?[a-z|A-Z]{2}" title="" placeholder="1506DA" data-hint="Verplicht veld,<br/>Valide postcode">*@
+									</div>
+								</div>
+								<div class="span4">
+									<label class="control-label">Huisnummer</label>
+									<div class="input-prepend full-width">                                      
+										<span class="add-on left"><i class="icon-hex"></i></span>
+                                          @Html.TextBoxFor(m => m.HouseNumber, new { required = "", pattern = "[1-9][0-9]*", placeholder = "81", data_hint = "Verplicht veld,<br/>Valide huisnummer" })
+										@*<input type="text" id="streetnumber" required pattern="[1-9][0-9]*" title="" placeholder="81" data-hint="Verplicht veld,<br/>Valide huisnummer">*@
+									</div>
+								</div>
+								<div class="span4">
+									<label class="control-label">Toevoeging</label>
+									<div class="input-prepend full-width">
+										<span class="add-on left"><i class="icon-extra"></i></span>
+                                        @Html.TextBoxFor(m => m.HouseNumberExtension, new { maxlength = "9", id = "streetnumber_addition", placeholder = "a" })
+										@*<input type="text" maxlength="9" id="streetnumber_addition" placeholder="a">*@
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Straatnaam</label>
+							<div class="input-prepend full-width">
+								<span class="add-on left"><i class="icon-home"></i></span>
+                                @Html.TextBoxFor(m => m.Street, new { @readonly = "true", })
+								@*<input type="text" id="streetname" placeholder="">*@
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Woonplaats</label>
+							<div class="input-prepend full-width">
+								<span class="add-on left"><i class="icon-office"></i></span>
+                                 @Html.TextBoxFor(m => m.City, new { @readonly = "true", })
+								@*<input type="text" id="city" placeholder="">*@
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Land</label>
+							<div class="input-prepend full-width">
+								<span class="add-on left"><i class="icon-globe"></i></span>
+                                @Html.EditorFor(m => m.Country, "Enum")
+							</div>
+						</div>
+
+						<div class="controls-row">
+							<label class="control-label">Telefoonnummer (mobiel)</label>
+							<div class="input-prepend full-width">
+								<span class="add-on left"><i class="icon-phone"></i></span>
+                                @Html.TextBoxFor(m => m.PhoneMobile, new { type = "tel", maxlength = "13", data_hint = "Maximaal<br/>13 tekens" })
+								@*<input type="tel" placeholder="" maxlength="13" data-hint="Maximaal<br/>13 tekens">*@
+							</div>
+						</div>
+						<div class="controls-row">
+							<label class="control-label">Telefoonnummer (thuis)</label>
+							<div class="input-prepend full-width">
+								<span class="add-on left"><i class="icon-phone"></i></span>
+                                @Html.TextBoxFor(m => m.Phone, new { type = "tel", maxlength = "13", data_hint = "Maximaal<br/>13 tekens" })
+								@*<input type="tel" placeholder="" maxlength="13" data-hint="Maximaal<br/>13 tekens">*@
+							</div>
+						</div>
+						<div class="controls-row">
+							<label class="control-label">Telefoonnummer (werk)</label>
+							<div class="input-prepend full-width">
+								<span class="add-on left"><i class="icon-phone"></i></span>
+                                @Html.TextBoxFor(m => m.PhoneWork, new { type = "tel", maxlength = "13", data_hint = "Maximaal<br/>13 tekens" })
+								@*<input type="tel" placeholder="" maxlength="13" data-hint="Maximaal<br/>13 tekens">*@
+							</div>
+						</div>
+
+
+					</div>
+
+	</div>
+
+

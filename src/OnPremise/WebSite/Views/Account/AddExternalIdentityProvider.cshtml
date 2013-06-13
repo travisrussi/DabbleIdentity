@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = ViewBag.SiteName;
+}
+@section styles
+{
+    <link type="text/css" rel="stylesheet" href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/bundles/css/openid")" />
+}
+    <div class="span6 offset3 middle-aligned"">
+        <div class="well primary">
+            <h1>Select one of these to login:</h1>
+            <div class="breath-v">
+                @Html.Action("GetIdentityProviders", "Hrd", new { area = "" })              
+            </div>
+        </div>
+    </div>

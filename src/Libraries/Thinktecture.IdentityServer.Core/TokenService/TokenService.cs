@@ -18,6 +18,7 @@ using System.Text;
 using System.Xml;
 using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer.TokenService
 {
@@ -40,6 +41,8 @@ namespace Thinktecture.IdentityServer.TokenService
 
         [Import]
         public IConfigurationRepository ConfigurationRepository { get; set; }
+
+        static Logger logger = LogManager.GetCurrentClassLogger();
 
         public TokenService(SecurityTokenServiceConfiguration configuration)
             : base(configuration)
@@ -67,20 +70,20 @@ namespace Thinktecture.IdentityServer.TokenService
         {
             if (rst.AppliesTo == null)
             {
-                Tracing.Error(string.Format("token request from {0} - but no realm specified.",
+                logger.Error(string.Format("token request from {0} - but no realm specified.",
                     principal.Identity.Name));
 
                 throw new InvalidRequestException();
             }
 
-            Tracing.Information(string.Format("Starting token request from {0} for {1}",
+            logger.Info(string.Format("Starting token request from {0} for {1}",
                 principal.Identity.Name,
                 rst.AppliesTo.Uri.AbsoluteUri));
 
             var authenticationMethod = principal.Identities.First().FindFirst(ClaimTypes.AuthenticationMethod);
             if (authenticationMethod != null)
             {
-                Tracing.Information("Authentication method: " + authenticationMethod.Value);
+                logger.Info("Authentication method: " + authenticationMethod.Value);
             }
 
             // analyze request
@@ -127,7 +130,7 @@ namespace Thinktecture.IdentityServer.TokenService
             // externally authenticated user
             if (principal.HasClaim(c => c.Type == Constants.Claims.IdentityProvider && c.Issuer == Constants.InternalIssuer))
             {
-                Tracing.Information("Issuing a token for an external user.");
+                logger.Info("Issuing a token for an external user.");
                 return GetExternalOutputClaims(principal, requestDetails);
             }
 
@@ -136,12 +139,12 @@ namespace Thinktecture.IdentityServer.TokenService
 
             if (requestDetails.IsActAsRequest)
             {
-                Tracing.Information("Issuing act as token");
+                logger.Info("Issuing act as token");
                 return GetActAsClaimsIdentity(outputIdentity, requestDetails);
             }
             else
             {
-                Tracing.Information("Issuing identity token");
+                logger.Info("Issuing identity token");
                 return outputIdentity;
             }
         }
@@ -188,8 +191,8 @@ namespace Thinktecture.IdentityServer.TokenService
             // set the caller's identity as the last actor in the delegation chain
             lastActor.Actor = clientIdentity;
 
-            Tracing.Information("ActAs client identity: " + actAsIdentity.Name);
-            Tracing.Information("ActAs actor identity : " + actAsIdentity.Actor.Name);
+            logger.Info("ActAs client identity: " + actAsIdentity.Name);
+            logger.Info("ActAs actor identity : " + actAsIdentity.Actor.Name);
 
             // return the actAsIdentity instead of the caller's identity in this case
             return actAsIdentity;
@@ -212,9 +215,9 @@ namespace Thinktecture.IdentityServer.TokenService
 
             if (ConfigurationRepository.Diagnostics.EnableFederationMessageTracing)
             {
-                Tracing.Information(SerializeRequest(request));
-                Tracing.Information(SerializeResponse(response));
-                Tracing.Information(SerializeToken(tokenDescriptor));
+                logger.Info(SerializeRequest(request));
+                logger.Info(SerializeResponse(response));
+                logger.Info(SerializeToken(tokenDescriptor));
             }
 
             return response;

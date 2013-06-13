@@ -3,11 +3,13 @@ using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Profile;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
 {
     public class UserProfileViewModel
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         public UserProfileViewModel(string username, ProfilePropertyInputModel[] values)
         {
             this.Username = username;
@@ -30,8 +32,8 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                 var profile = ProfileBase.Create(username);
                 var values =
                     from property in propertyList
-                    where 
-                        (property.PropertyType.IsValueType && !property.PropertyType.IsGenericType) || 
+                    where
+                        (property.PropertyType.IsValueType && !property.PropertyType.IsGenericType) ||
                         property.PropertyType == typeof(string)
                     select new ProfilePropertyViewModel(property, Convert.ToString(profile[property.Name]));
                 ProfileValues = values.ToArray();
@@ -52,7 +54,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                 var prop = ProfileBase.Properties[ProfileValues[i].Data.Name];
                 try
                 {
-                    if (String.IsNullOrWhiteSpace(ProfileValues[i].Data.Value) && 
+                    if (String.IsNullOrWhiteSpace(ProfileValues[i].Data.Value) &&
                         prop.PropertyType.IsValueType)
                     {
                         errors.AddModelError("profileValues[" + i + "].value", string.Format(Resources.UserProfileViewModel.RequiredProperty, prop.Name));
@@ -82,7 +84,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                 catch (Exception ex)
                 {
                     errors.AddModelError("", "Error updating profile.");
-                    Tracing.Error(ex.Message);
+                    logger.Error(ex.Message);
                 }
             }
 
@@ -107,7 +109,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
         }
 
         public ProfilePropertyViewModel(SettingsProperty property, string value)
-            : this(property, 
+            : this(property,
                     new ProfilePropertyInputModel
                     {
                         Name = property.Name,
@@ -115,7 +117,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                     })
         {
         }
-        
+
         ProfilePropertyViewModel.ProfilePropertyType PropTypeFromPropertyType(SettingsProperty prop)
         {
             return prop.PropertyType == typeof(Boolean) ?

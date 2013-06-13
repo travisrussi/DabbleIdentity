@@ -11,12 +11,14 @@ using System.Web.Mvc;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.Repositories;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols.OAuth2
 {
     [ClaimsAuthorize(Constants.Actions.Issue, Constants.Resources.OAuth2)]
     public class OAuth2AuthorizeController : Controller
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
         [Import]
         public IClientsRepository Clients { get; set; }
 
@@ -46,7 +48,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
         [HttpGet]
         public ActionResult HandleRequest(AuthorizeRequest request)
         {
-            Tracing.Information("OAuth2 HandleRequest endpoint invoked");
+            logger.Info("OAuth2 HandleRequest endpoint invoked");
 
             // check client
             Client client;
@@ -56,7 +58,8 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             RelyingParty rp;
             if (!RPRepository.TryGet(request.scope, out rp))
             {
-                Tracing.Error("RP not found for scope : " + request.scope);
+
+                logger.Error("RP not found for scope : " + request.scope);
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.InvalidScope, request.response_type, request.state);
             }
 
@@ -81,7 +84,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             }
 
             // we don't know exactly why, so use ServerError
-            Tracing.Error("Authorization Endpoint failed");
+            logger.Error("Authorization Endpoint failed");
             return ClientError(client.RedirectUri, OAuth2Constants.Errors.ServerError, request.response_type, request.state);
         }
 
@@ -115,24 +118,24 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             {
                 client = null;
                 ViewBag.Message = "Invalid request parameters";
-                Tracing.Error(ViewBag.Message);
+                logger.Error(ViewBag.Message);
                 return View("Error");
             }
-            
+
             // validate client
             if (!Clients.TryGetClient(request.client_id, out client))
             {
                 ViewBag.Message = "Invalid client_id : " + request.client_id;
-                Tracing.Error(ViewBag.Message);
+                logger.Error(ViewBag.Message);
                 return View("Error");
             }
 
             // validate redirect uri
-            if (string.IsNullOrEmpty(request.redirect_uri) || 
+            if (string.IsNullOrEmpty(request.redirect_uri) ||
                 !string.Equals(request.redirect_uri, client.RedirectUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase))
             {
                 ViewBag.Message = "The redirect_uri in the request: " + request.redirect_uri + " did not match a registered redirect URI.";
-                Tracing.Error(ViewBag.Message);
+                logger.Error(ViewBag.Message);
                 return View("Error");
             }
 
@@ -141,19 +144,19 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             {
                 if (redirectUrl.Scheme == Uri.UriSchemeHttp)
                 {
-                    Tracing.Error("Redirect URI not over SSL : " + request.redirect_uri);
+                    logger.Error("Redirect URI not over SSL : " + request.redirect_uri);
                     return ClientError(client.RedirectUri, OAuth2Constants.Errors.InvalidRequest, string.Empty, request.state);
                 }
             }
             else
             {
-                Tracing.Error("Redirect URI not a valid URI : " + request.redirect_uri);
+                logger.Error("Redirect URI not a valid URI : " + request.redirect_uri);
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.InvalidRequest, string.Empty, request.state);
             }
 
             if (String.IsNullOrWhiteSpace(request.response_type))
             {
-                Tracing.Error("response_type is null or empty");
+                logger.Error("response_type is null or empty");
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.InvalidRequest, string.Empty, request.state);
             }
 
@@ -161,7 +164,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             if (!request.response_type.Equals(OAuth2Constants.ResponseTypes.Token, StringComparison.Ordinal) &&
                 !request.response_type.Equals(OAuth2Constants.ResponseTypes.Code, StringComparison.Ordinal))
             {
-                Tracing.Error("response_type is not token or code: " + request.response_type);
+                logger.Error("response_type is not token or code: " + request.response_type);
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.UnsupportedResponseType, string.Empty, request.state);
             }
 
@@ -169,7 +172,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             Uri uri;
             if (!Uri.TryCreate(request.scope, UriKind.Absolute, out uri))
             {
-                Tracing.Error("scope is not a URI: " + request.scope);
+                logger.Error("scope is not a URI: " + request.scope);
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.InvalidScope, request.response_type, request.state);
             }
 
@@ -177,14 +180,14 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
             if (request.response_type.Equals(OAuth2Constants.ResponseTypes.Token) &&
                 !client.AllowImplicitFlow)
             {
-                Tracing.Error("response_type is token and client does not allow implicit flow. client: " + client.Name);
+                logger.Error("response_type is token and client does not allow implicit flow. client: " + client.Name);
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.UnsupportedResponseType, request.response_type, request.state);
             }
 
             if (request.response_type.Equals(OAuth2Constants.ResponseTypes.Code) &&
                 !client.AllowCodeFlow)
             {
-                Tracing.Error("response_type is code and client does not allow code flow. client: " + client.Name);
+                logger.Error("response_type is code and client does not allow code flow. client: " + client.Name);
                 return ClientError(client.RedirectUri, OAuth2Constants.Errors.UnsupportedResponseType, request.response_type, request.state);
             }
 

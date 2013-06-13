@@ -9,6 +9,8 @@ namespace Thinktecture.IdentityServer.Models
     {
         WSStar = 1,
         //public const string OpenId = "OpenId";
-        OAuth2 = 2
+        OAuth2 = 2,
+
+        OpenId = 3
     }
 }

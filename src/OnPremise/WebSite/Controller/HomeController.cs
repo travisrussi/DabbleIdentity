@@ -28,6 +28,7 @@ namespace Thinktecture.IdentityServer.Web.Controllers
 
         public ActionResult Index()
         {
+            return RedirectToAction("Index", "Account");
             if (Request.Browser.IsMobileDevice)
             {
                 HttpContext.SetOverriddenBrowser(BrowserOverride.Desktop);
@@ -62,6 +63,7 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                 if (Configuration.WSFederation.EnableFederation)
                 {
                     list.Add("WS-Federation HRD", endpoints.WSFederationHRD.AbsoluteUri);
+                    list.Add("OAuth2 Callback", endpoints.OAuth2Callback.AbsoluteUri);
                 }
             }
 
@@ -97,8 +99,7 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                 if (Configuration.OAuth2.EnableImplicitFlow)
                 {
                     list.Add("OAuth2 Authorize", endpoints.OAuth2Authorize.AbsoluteUri);
-                }
-                list.Add("OAuth2 Callback", endpoints.OAuth2Callback.AbsoluteUri);
+                }               
                 if (Configuration.OAuth2.EnableResourceOwnerFlow)
                 {
                     list.Add("OAuth2 Token", endpoints.OAuth2Token.AbsoluteUri);
@@ -108,8 +109,8 @@ namespace Thinktecture.IdentityServer.Web.Controllers
             // adfs integration
             if (Configuration.AdfsIntegration.Enabled)
             {
-                if (Configuration.AdfsIntegration.UsernameAuthenticationEnabled || 
-                    Configuration.AdfsIntegration.SamlAuthenticationEnabled || 
+                if (Configuration.AdfsIntegration.UsernameAuthenticationEnabled ||
+                    Configuration.AdfsIntegration.SamlAuthenticationEnabled ||
                     Configuration.AdfsIntegration.JwtAuthenticationEnabled)
                 {
                     list.Add("ADFS Integration", endpoints.AdfsIntegration.AbsoluteUri);

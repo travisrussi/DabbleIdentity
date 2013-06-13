@@ -3,7 +3,8 @@
  * see license.txt
  */
 
-using BrockAllen.OAuth2;
+//using BrockAllen.OAuth2;
+using Microsoft.Web.WebPages.OAuth;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,18 @@ using System.Web.Mvc;
 using Thinktecture.IdentityServer.Models;
 using Thinktecture.IdentityServer.Repositories;
 using Thinktecture.IdentityServer.TokenService;
+using DotNetOpenAuth.AspNet;
+using DotNetOpenAuth.AspNet.Clients;
+using WebMatrix.WebData;
+using NLog;
 
 namespace Thinktecture.IdentityServer.Protocols.WSFederation
 {
-    public class HrdController : Controller
+    //TODO rebuild HRD to support HRD
+    public class HrdController : AccountControllerBase
     {
+        static Logger logger = LogManager.GetCurrentClassLogger();
+
         const string _cookieName = "hrdsignout";
         const string _cookieNameIdp = "hrdidp";
         const string _cookieNameRememberHrd = "hrdSelection";
@@ -37,16 +45,21 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         [Import]
         public IIdentityProviderRepository IdentityProviderRepository { get; set; }
 
+        [Import]
+
+        public IUserManagementRepository UserManagementRepository { get; set; }
+
 
         public HrdController()
         {
             Container.Current.SatisfyImportsOnce(this);
         }
 
-        public HrdController(IConfigurationRepository configurationRepository, IIdentityProviderRepository identityProviderRepository)
+        public HrdController(IConfigurationRepository configurationRepository, IIdentityProviderRepository identityProviderRepository, IUserManagementRepository userManagementRepository)
         {
             IdentityProviderRepository = identityProviderRepository;
             ConfigurationRepository = configurationRepository;
+            UserManagementRepository = userManagementRepository;
         }
 
         #region Protocol Implementation
@@ -54,7 +67,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         [ActionName("Issue")]
         public ActionResult ProcessRequest()
         {
-            Tracing.Verbose("HRD endpoint called.");
+            logger.Info("HRD endpoint called.");
 
             var message = WSFederationMessage.CreateFromUri(HttpContext.Request.Url);
 
@@ -103,7 +116,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         [ActionName("Select")]
         public ActionResult ProcessHRDSelection(string idp, string originalSigninUrl, bool rememberHRDSelection = false)
         {
-            Tracing.Verbose("HRD selected: " + idp);
+            logger.Info("HRD selected: " + idp);
 
             var uri = new Uri(originalSigninUrl);
             var message = WSFederationMessage.CreateFromUri(uri);
@@ -129,45 +142,79 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
                 {
                     return RedirectToOAuth2IdentityProvider(ip, signinMessage);
                 }
+                if (ip.Type == IdentityProviderTypes.OpenId)
+                {
+                    return RedirectToOpenIdIdentityProvider(ip, signinMessage);
+                }
             }
             catch (Exception ex)
             {
-                Tracing.Error(ex.ToString());
+                logger.Error(ex.ToString());
             }
 
             return View("Error");
         }
 
-        [HttpGet]
+        [AllowAnonymous]
         [ActionName("OAuthTokenCallback")]
-        public async Task<ActionResult> OAuthTokenCallback()
+        //TODO claims management. UserName doesn't have to be Email.
+        //TODO add messages to language file system
+        public ActionResult OAuthTokenCallback(string returnUrl)
         {
-            var ctx = GetOAuthContextCookie();
-            var ip = GetVisibleIdentityProviders().Single(x => x.ID == ctx.IdP);
+            var uri = new Uri(returnUrl);
+            var redirectUri = Url.Action("OAuthTokenCallback", new { ReturnUrl = returnUrl });
+            AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication(redirectUri.ToLower());
 
-            var oauth2 = new OAuth2Client(GetProviderTypeFromOAuthProfileTypes(ip.ProviderType.Value), ip.ClientID, ip.ClientSecret);
-            var result = await oauth2.ProcessCallbackAsync();
-            if (result.Error != null) return View("Error");
-
-            var claims = result.Claims.ToList();
-            string[] claimsToRemove = new string[]
+            if (!result.IsSuccessful)
             {
-                "http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider",
-                ClaimTypes.AuthenticationInstant
-            };
-            
-            foreach (var toRemove in claimsToRemove)
-            {
-                var tmp = claims.Find(x => x.Type == toRemove);
-                if (tmp != null) claims.Remove(tmp);
+                return RedirectToAction("ExternalLoginFailure");
             }
-            
-            claims.Add(new Claim(Constants.Claims.IdentityProvider, ip.Name, ClaimValueTypes.String, Constants.InternalIssuer));
-            var id = new ClaimsIdentity(claims, "OAuth");
-            var cp = new ClaimsPrincipal(id);
-            
-            return ProcessOAuthResponse(cp, ctx);
+            //User Name is always email.
+            var userName = OAuthWebSecurity.GetUserName(result.Provider, result.ProviderUserId);
+            //var email = result.ExtraData.Select(d => d.Key.Contains("email"));
+            if (!string.IsNullOrEmpty(userName))
+            {
+                return SignIn(
+                    userName,
+                    AuthenticationMethods.Unspecified,
+                    uri.PathAndQuery,
+                    false,
+                    ConfigurationRepository.Global.SsoCookieLifetime);
+            }
+
+            if (User.Identity.IsAuthenticated)
+            {
+                // If the current user is logged in add the new account   
+                if(UserManagementRepository.CreateOrUpdateOAuthAccount(result.Provider, result.ProviderUserId, User.Identity.Name))
+                {
+                    return RedirectToLocal(returnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Error", new { message = "An Identity provider of the type" + result.Provider + " is already added to this account" });
+                }
+                
+            }
+            else
+            {
+                // User is new, Create a new user and us there email as username
+                if (UserManagementRepository.CreateOrUpdateOAuthAccount(result.Provider, result.ProviderUserId, result.UserName))
+                {
+                    return SignIn(
+                        result.UserName,
+                        AuthenticationMethods.HardwareToken,
+                        uri.PathAndQuery,
+                        false,
+                        ConfigurationRepository.Global.SsoCookieLifetime);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Error", new { message = "An error occured while trying to create an account" });
+                }
+            }
         }
+
+
         #endregion
 
         #region Helper
@@ -175,18 +222,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         {
             if (!string.IsNullOrWhiteSpace(message.HomeRealm))
             {
-                var idp = GetEnabledIdentityProvider(message.HomeRealm);
-                if (idp != null)
-                {
-                    if (idp.Type == IdentityProviderTypes.WSStar)
-                    {
-                        return RedirectToWSFedIdentityProvider(message);
-                    }
-                    else if (idp.Type == IdentityProviderTypes.OAuth2)
-                    {
-                        return RedirectToOAuth2IdentityProvider(idp, message);
-                    }
-                }
+                return RedirectToWSFedIdentityProvider(message);
             }
             else
             {
@@ -200,8 +236,30 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
                     return ProcessHomeRealmFromCookieValue(message, pastHRDSelection);
                 }
             }
+        }
 
-            return View("Error");
+        [ChildActionOnly]        
+        public ActionResult GetIdentityProviders(string ReturnUrl)
+        {
+#if DEBUG
+            UriBuilder b = new UriBuilder("https:", this.Request.Url.Host, 44300); 
+
+#else
+            UriBuilder b = new UriBuilder("https:", this.Request.Url.Host);
+#endif
+
+            string wreply = b.ToString();
+            string wtrealm = b.ToString();
+
+            SignInRequestMessage message = new SignInRequestMessage(new Uri(wtrealm), wtrealm);
+            
+            if(string.IsNullOrEmpty(ReturnUrl))
+            {
+                ReturnUrl = "/account/myprofile";
+
+            }
+            message.Reply = b.ToString().TrimEnd('/') + ReturnUrl;
+            return ShowHomeRealmSelection(message, "IdentityProviders");
         }
 
         private ActionResult ProcessWSFedSignOutRequest(SignOutRequestMessage message)
@@ -262,28 +320,30 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         }
 
         private ActionResult RedirectToOAuth2IdentityProvider(IdentityProvider ip, SignInRequestMessage request)
+        {           
+          return new ExternalLoginResult(ip.OAuth2ProviderType.ToString(),( "~/" + Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback + "?ReturnUrl=" + HttpUtility.UrlEncode(request.Reply)).ToLower());
+        }
+
+        private ActionResult RedirectToOpenIdIdentityProvider(IdentityProvider ip, SignInRequestMessage request)
         {
-            var ctx = new OAuth2Context
-            {
-                Wctx = request.Context,
-                Realm = request.Realm,
-                IdP = ip.ID
-            };
+            return new ExternalLoginResult(ip.OpenIdProviderType.ToString(), ("~/" + Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback + "?ReturnUrl=" + HttpUtility.UrlEncode(request.Reply)).ToLower());
+        }
 
-            SetOAuthContextCookie(ctx);
-
-            var oauth2 = new OAuth2Client(GetProviderTypeFromOAuthProfileTypes(ip.ProviderType.Value), ip.ClientID, ip.ClientSecret);
-            switch (ip.ProviderType)
+        internal class ExternalLoginResult : ActionResult
+        {
+            public ExternalLoginResult(string provider, string returnUrl)
             {
-                case OAuth2ProviderTypes.Google:
-                    return new OAuth2ActionResult(oauth2, ProviderType.Google, null);
-                case OAuth2ProviderTypes.Facebook:
-                    return new OAuth2ActionResult(oauth2, ProviderType.Facebook, null);
-                case OAuth2ProviderTypes.Live:
-                    return new OAuth2ActionResult(oauth2, ProviderType.Live, null);
+                Provider = provider;
+                ReturnUrl = returnUrl;
             }
 
-            return View("Error");
+            public string Provider { get; private set; }
+            public string ReturnUrl { get; private set; }
+
+            public override void ExecuteResult(ControllerContext context)
+            {
+                OAuthWebSecurity.RequestAuthentication(Provider, ReturnUrl);
+            }
         }
 
         private ActionResult ProcessWSFedSignInResponse(SignInResponseMessage responseMessage, SecurityToken token)
@@ -314,47 +374,6 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             return new WSFederationResult(wsFedResponse, requireSsl: ConfigurationRepository.WSFederation.RequireSslForReplyTo);
         }
 
-        private ActionResult ProcessOAuthResponse(ClaimsPrincipal principal, Context context)
-        {
-            var message = new SignInRequestMessage(new Uri("http://foo"), context.Realm);
-            message.Context = context.Wctx;
-
-            // issue token and create ws-fed response
-            var wsFedResponse = FederatedPassiveSecurityTokenServiceOperations.ProcessSignInRequest(
-                message,
-                principal,
-                TokenServiceConfiguration.Current.CreateSecurityTokenService());
-
-            // set cookie for single-sign-out
-            new SignInSessionsManager(HttpContext, _cookieName, ConfigurationRepository.Global.MaximumTokenLifetime)
-                .AddEndpoint(wsFedResponse.BaseUri.AbsoluteUri);
-
-            return new WSFederationResult(wsFedResponse, requireSsl: ConfigurationRepository.WSFederation.RequireSslForReplyTo);
-        }
-
-        #region Internal
-        ProviderType GetProviderTypeFromOAuthProfileTypes(OAuth2ProviderTypes type)
-        {
-            switch (type)
-            {
-                case OAuth2ProviderTypes.Facebook: return ProviderType.Facebook;
-                case OAuth2ProviderTypes.Live: return ProviderType.Live;
-                case OAuth2ProviderTypes.Google: return ProviderType.Google;
-                default: throw new Exception("Invalid OAuthProfileTypes");
-            }
-        }
-
-        IdentityProvider GetEnabledIdentityProvider(string homeRealm)
-        {
-            IdentityProvider idp;
-            if (IdentityProviderRepository.TryGet(homeRealm, out idp))
-            {
-                if (idp.Enabled) return idp;
-            }
-
-            return null;
-        }
-        
         IEnumerable<IdentityProvider> GetEnabledWSIdentityProviders()
         {
             return IdentityProviderRepository.GetAll().Where(
@@ -384,39 +403,23 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             return new ClaimsPrincipal(identity);
         }
 
-        private ActionResult ShowHomeRealmSelection(SignInRequestMessage message)
+        private ActionResult ShowHomeRealmSelection(SignInRequestMessage message, string patialView = "")
         {
             var idps = GetVisibleIdentityProviders();
-            if (idps.Count() == 1)
-            {
-                var ip = idps.First();
-                message.HomeRealm = ip.Name;
-                Tracing.Verbose("Only one HRD option available: " + message.HomeRealm);
-                if (ip.Type == IdentityProviderTypes.WSStar)
+
+                logger.Info("HRD selection screen displayed.");
+                var vm = new HrdViewModel(message, idps);
+                if (string.IsNullOrEmpty(patialView))
                 {
-                    return RedirectToWSFedIdentityProvider(ip, message);
-                }
-                else if (ip.Type == IdentityProviderTypes.OAuth2)
-                {
-                    return RedirectToOAuth2IdentityProvider(ip, message);
+                    return View("HRD", vm);
                 }
                 else
                 {
-                    throw new Exception("Invalid IdentityProviderType");
+                    return PartialView(patialView, vm);
                 }
-            }
-            else
-            {
-                Tracing.Verbose("HRD selection screen displayed.");
-                var vm = new HrdViewModel(message, idps);
-                return View("HRD", vm);
-            }
         }
         #endregion
 
-       
-
-        #endregion
 
         #region Cookies
         private void SetIdPCookie(string url)
@@ -453,7 +456,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         {
             var j = JObject.FromObject(new Context { Wctx = wctx, Realm = realm, WsFedEndpoint = wsfedEndpoint });
 
-            var cookie = new HttpCookie(_cookieContext, HttpUtility.UrlEncode(j.ToString()))
+            var cookie = new HttpCookie(_cookieContext, j.ToString())
             {
                 Secure = true,
                 HttpOnly = true,
@@ -480,38 +483,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
 
             return json.ToObject<Context>();
         }
-
-        private void SetOAuthContextCookie(OAuth2Context ctx)
-        {
-            var j = JObject.FromObject(ctx);
-
-            var cookie = new HttpCookie(_cookieOAuthContext, HttpUtility.UrlEncode(j.ToString()));
-            cookie.Secure = true;
-            cookie.HttpOnly = true;
-            cookie.Path = Request.ApplicationPath;
-
-            Response.Cookies.Add(cookie);
-        }
-
-        private OAuth2Context GetOAuthContextCookie()
-        {
-            var cookie = Request.Cookies[_cookieOAuthContext];
-            if (cookie == null)
-            {
-                throw new InvalidOperationException("cookie");
-            }
-
-            var json = JObject.Parse(HttpUtility.UrlDecode(cookie.Value));
-            var data = json.ToObject<OAuth2Context>();
-
-            var deletecookie = new HttpCookie(_cookieOAuthContext, ".");
-            deletecookie.Secure = true;
-            deletecookie.HttpOnly = true;
-            deletecookie.Path = Request.ApplicationPath;
-            Response.Cookies.Add(deletecookie);
-
-            return data;
-        }
+        
 
         private void SetRememberHRDCookieValue(string realm)
         {
@@ -542,7 +514,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
                 var idp = idps.SingleOrDefault();
                 if (idp == null)
                 {
-                    Tracing.Verbose("Past HRD selection from cookie not found in current HRD list. Past value was: " + realm);
+                    logger.Info("Past HRD selection from cookie not found in current HRD list. Past value was: " + realm);
                     SetRememberHRDCookieValue(null);
                 }
 
@@ -563,11 +535,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             public string Wctx { get; set; }
             public string Realm { get; set; }
             public string WsFedEndpoint { get; set; }
-        }
-
-        internal class OAuth2Context : Context
-        {
-            public int IdP { get; set; }
+            public string ReturnUrl { get; set; }
         }
 
         #endregion
