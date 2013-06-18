@@ -58,7 +58,7 @@ namespace Thinktecture.IdentityServer.TokenService
             {
                 throw new ArgumentNullException("principal");
             }
-            logger.Info("Starting PolicyOptions creation");
+
             logger.Info("Starting PolicyOptions creation");
 
             var clientIdentity = AnalyzeClientIdentity(principal);

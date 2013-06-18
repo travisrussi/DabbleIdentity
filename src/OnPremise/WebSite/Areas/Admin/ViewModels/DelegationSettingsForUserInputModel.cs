@@ -12,7 +12,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
     {
         private Repositories.IDelegationRepository delegationRepository;
         IUserManagementRepository userManagementRepository;
-
+        
         [Required]
         public string UserName { get; set; }
         public IEnumerable<DelegationSetting> DelegationSettings { get; set; }
@@ -39,7 +39,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                 }).ToList();
             allnames.Insert(0, new SelectListItem { Text = DelegationSettingsForUserInputModel.ChooseItem, Value = "" });
             this.AllUserNames = allnames;
-
+            
             this.UserName = username;
             if (!IsNew)
             {

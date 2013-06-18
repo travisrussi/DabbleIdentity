@@ -193,7 +193,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
                 {
                     return RedirectToAction("Index", "Error", new { message = "An Identity provider of the type" + result.Provider + " is already added to this account" });
                 }
-                
+
             }
             else
             {
@@ -238,11 +238,11 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             }
         }
 
-        [ChildActionOnly]        
+        [ChildActionOnly]
         public ActionResult GetIdentityProviders(string ReturnUrl)
         {
 #if DEBUG
-            UriBuilder b = new UriBuilder("https:", this.Request.Url.Host, 44300); 
+            UriBuilder b = new UriBuilder("https:", this.Request.Url.Host, 44300);
 
 #else
             UriBuilder b = new UriBuilder("https:", this.Request.Url.Host);
@@ -252,7 +252,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             string wtrealm = b.ToString();
 
             SignInRequestMessage message = new SignInRequestMessage(new Uri(wtrealm), wtrealm);
-            
+
             if(string.IsNullOrEmpty(ReturnUrl))
             {
                 ReturnUrl = "/account/myprofile";
@@ -320,8 +320,8 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         }
 
         private ActionResult RedirectToOAuth2IdentityProvider(IdentityProvider ip, SignInRequestMessage request)
-        {           
-          return new ExternalLoginResult(ip.OAuth2ProviderType.ToString(),( "~/" + Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback + "?ReturnUrl=" + HttpUtility.UrlEncode(request.Reply)).ToLower());
+        {
+            return new ExternalLoginResult(ip.OAuth2ProviderType.ToString(), ("~/" + Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback + "?ReturnUrl=" + HttpUtility.UrlEncode(request.Reply)).ToLower());
         }
 
         private ActionResult RedirectToOpenIdIdentityProvider(IdentityProvider ip, SignInRequestMessage request)
@@ -407,16 +407,16 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         {
             var idps = GetVisibleIdentityProviders();
 
-                logger.Info("HRD selection screen displayed.");
-                var vm = new HrdViewModel(message, idps);
-                if (string.IsNullOrEmpty(patialView))
-                {
-                    return View("HRD", vm);
-                }
-                else
-                {
-                    return PartialView(patialView, vm);
-                }
+            logger.Info("HRD selection screen displayed.");
+            var vm = new HrdViewModel(message, idps);
+            if (string.IsNullOrEmpty(patialView))
+            {
+                return View("HRD", vm);
+            }
+            else
+            {
+                return PartialView(patialView, vm);
+            }
         }
         #endregion
 
@@ -483,7 +483,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
 
             return json.ToObject<Context>();
         }
-        
+
 
         private void SetRememberHRDCookieValue(string realm)
         {

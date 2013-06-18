@@ -426,7 +426,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
             {
                 ID = client.Id,
                 ClientId = client.ClientId,
-                ClientSecret = client.ClientSecret,
+                //ClientSecret = client.ClientSecret,
                 HasClientSecret = !String.IsNullOrWhiteSpace(client.ClientSecret),
                 Description = client.Description,
                 Name = client.Name,
@@ -612,7 +612,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
                 case "Miss":
                     salutaionEnum = SalutationEnum.Miss;
                     break;
-                 default:
+                default:
                     salutaionEnum = SalutationEnum.Mr;
                     break;
             }
@@ -671,3 +671,4 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
     }
         #endregion
 }
+

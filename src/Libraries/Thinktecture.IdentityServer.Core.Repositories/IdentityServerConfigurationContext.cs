@@ -10,7 +10,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using Thinktecture.IdentityServer.Repositories.Sql.Configuration;
 
 namespace Thinktecture.IdentityServer.Repositories.Sql
-{
+{    
     public class IdentityServerConfigurationContext : DbContext
     {
         public DbSet<GlobalConfiguration> GlobalConfiguration { get; set; }
@@ -22,7 +22,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
         public DbSet<AdfsIntegrationConfiguration> AdfsIntegration { get; set; }
         public DbSet<SimpleHttpConfiguration> SimpleHttp { get; set; }
         public DbSet<DiagnosticsConfiguration> Diagnostics { get; set; }
-
+        
         public DbSet<ClientCertificates> ClientCertificates { get; set; }
         public DbSet<Delegation> Delegation { get; set; }
         public DbSet<RelyingParties> RelyingParties { get; set; }

@@ -28,7 +28,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var model = ConfigurationRepository.Global;
             return View("Index", model);
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(GlobalConfiguration model)
@@ -58,7 +58,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
         {
             return View();
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Recycle")]

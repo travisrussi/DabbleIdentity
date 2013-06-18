@@ -67,13 +67,13 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             {
                 var vm = new ChildMenuViewModel
                 {
-                    Items = list.Select(x =>
+                    Items = list.Select(x=>
                         new ChildMenuItem
                         {
                             Controller = "RP",
                             Action = "RP",
                             Title = x.DisplayName,
-                            RouteValues = new { id = x.ID }
+                            RouteValues = new{id=x.ID}
                         }).ToArray()
                 };
                 return PartialView("ChildMenu", vm);

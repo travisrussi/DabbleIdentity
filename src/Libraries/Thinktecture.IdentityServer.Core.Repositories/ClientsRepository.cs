@@ -68,7 +68,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
                 return false;
             }
         }
-
+        
         public IEnumerable<Models.Client> GetAll()
         {
             using (var entities = IdentityServerConfigurationContext.Get())

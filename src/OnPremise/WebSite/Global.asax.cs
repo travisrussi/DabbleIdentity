@@ -22,6 +22,8 @@ using Thinktecture.IdentityServer.DataAnnotationExtention;
 using System.Web;
 using Thinktecture.IdentityServer.Web.Controllers;
 using System.Net.Http.Formatting;
+using System.Data.Entity.Infrastructure;
+using WebMatrix.WebData;
 
 namespace Thinktecture.IdentityServer.Web
 {
@@ -52,14 +54,45 @@ namespace Thinktecture.IdentityServer.Web
 
             AreaRegistration.RegisterAllAreas();
 
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters, ConfigurationRepository);
             RouteConfig.RegisterRoutes(RouteTable.Routes, ConfigurationRepository, UserRepository);
             ProtocolConfig.RegisterProtocols(GlobalConfiguration.Configuration, RouteTable.Routes, ConfigurationRepository, UserRepository, RelyingPartyRepository);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            LazyInitializer.EnsureInitialized(ref _initializer, ref _isInitialized, ref _initializerLock);
             var authConfig = new AuthConfig();
-            authConfig.RegisterAllIdentityProviders();            
+            authConfig.RegisterAllIdentityProviders();
             //Communicator = Communicator<DynamicsSendJob, DynamicsReceiveJob>.InitializeAndStart();
         }
+
+        private static SimpleMembershipInitializer _initializer;
+        private static object _initializerLock = new object();
+        private static bool _isInitialized;
+        private class SimpleMembershipInitializer
+        {
+            public SimpleMembershipInitializer()
+            {
+                Database.SetInitializer<UsersContext>(null);
+
+                try
+                {
+                    using (var context = new UsersContext())
+                    {
+                        if (!context.Database.Exists())
+                        {
+                            // Create the SimpleMembership database without Entity Framework migration schema
+                            ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
+                        }
+                    }
+
+                    WebSecurity.InitializeDatabaseConnection("ProviderDB", "UserProfile", "UserId", "Email", true);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("The ASP.NET Simple Membership database could not be initialized. For more information, please see http://go.microsoft.com/fwlink/?LinkId=256588", ex);
+                }
+            }
+        }
+
 
         protected void Application_End()
         {
@@ -69,54 +102,54 @@ namespace Thinktecture.IdentityServer.Web
         protected void Application_Error()
         {
 
-                var exception = Server.GetLastError();
-                var httpException = exception as HttpException;
-                Response.TrySkipIisCustomErrors = true;
-                Response.Clear();
-                Server.ClearError();
+            var exception = Server.GetLastError();
+            var httpException = exception as HttpException;
+            Response.TrySkipIisCustomErrors = true;
+            Response.Clear();
+            Server.ClearError();
 
-                var routeData = new RouteData();
-                routeData.Values["controller"] = "Error";
-                routeData.Values["action"] = "General";
-                routeData.Values["exception"] = exception;
+            var routeData = new RouteData();
+            routeData.Values["controller"] = "Error";
+            routeData.Values["action"] = "General";
+            routeData.Values["exception"] = exception;
 
-                if (exception.Message.Equals("No route in the route table matches the supplied values."))
+            if (exception.Message.Equals("No route in the route table matches the supplied values."))
+            {
+                Response.StatusCode = 404;
+                routeData.Values["action"] = "Http404";
+            }
+            if (httpException != null)
+            {
+                Response.StatusCode = httpException.GetHttpCode();
+                switch (Response.StatusCode)
                 {
-                    Response.StatusCode = 404;
-                    routeData.Values["action"] = "Http404";
+                    case 403:
+                        routeData.Values["action"] = "Http403";
+                        break;
+
+                    case 404:
+                        routeData.Values["action"] = "Http404";
+                        break;
+
+                    case 500:
+                        routeData.Values["action"] = "General";
+                        break;
                 }
-                if (httpException != null)
-                {
-                    Response.StatusCode = httpException.GetHttpCode();
-                    switch (Response.StatusCode)
-                    {
-                        case 403:
-                            routeData.Values["action"] = "Http403";
-                            break;
+            }
+            else
+            {
+                Response.StatusCode = 500;
+            }
 
-                        case 404:
-                            routeData.Values["action"] = "Http404";
-                            break;
+            // Avoid IIS7 getting in the middle
+            IController errorController;
 
-                        case 500:
-                            routeData.Values["action"] = "General";
-                            break;
-                    }
-                }
-                else
-                {
-                    Response.StatusCode = 500;
-                }
+            errorController = new ErrorController();
 
-                // Avoid IIS7 getting in the middle
-                IController errorController;
+            var wrapper = new HttpContextWrapper(Context);
+            var rc = new RequestContext(wrapper, routeData);
+            errorController.Execute(rc);
 
-                errorController = new ErrorController();
-                
-                var wrapper = new HttpContextWrapper(Context);
-                var rc = new RequestContext(wrapper, routeData);
-                errorController.Execute(rc);
-   
         }
 
         private void SetupCompositionContainer()

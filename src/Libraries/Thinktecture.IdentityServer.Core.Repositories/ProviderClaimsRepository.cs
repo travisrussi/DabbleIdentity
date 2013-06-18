@@ -26,7 +26,6 @@ namespace Thinktecture.IdentityServer.Repositories
             var claims = new List<Claim>(from c in principal.Claims select c);
 
             // email address
-            //TODO fix this sending the claims
             string email = userName;
             if (!String.IsNullOrEmpty(email))
             {
@@ -35,8 +34,6 @@ namespace Thinktecture.IdentityServer.Repositories
 
             // roles
             GetRolesForToken(userName).ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
-
-            // profile claims
 
             // profile claims
             claims.AddRange(GetProfileClaims(userName));
@@ -102,7 +99,7 @@ namespace Thinktecture.IdentityServer.Repositories
                     var exist = prop.GetCustomAttribute<ClaimAttribute>();
                     if (exist != null)
                     {
-                         claimTypes.Add(GetProfileClaimType(prop.Name.ToLowerInvariant()));
+                        claimTypes.Add(GetProfileClaimType(prop.Name.ToLowerInvariant()));
                     }
                 }
             }

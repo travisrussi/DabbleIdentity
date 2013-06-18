@@ -1,4 +1,5 @@
-﻿using System.ServiceModel.Activation;
+﻿using BrockAllen.OAuth2;
+using System.ServiceModel.Activation;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -55,14 +56,14 @@ namespace Thinktecture.IdentityServer.Web
                     new { controller = "Hrd", action = "Select" },
                     new { method = new HttpMethodConstraint("POST") }
                 );
-
+                
                 // callback endpoint
+                OAuth2Client.OAuthCallbackUrl = Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback;
                 routes.MapRoute(
                     "oauth2callback",
                     Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback,
                     new { controller = "Hrd", action = "OAuthTokenCallback" }
                 );
-
             }
 
             // oauth2 endpoint
@@ -74,7 +75,6 @@ namespace Thinktecture.IdentityServer.Web
                     Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Authorize,
                     new { controller = "OAuth2Authorize", action = "index" }
                 );
-
 
                 // token endpoint
                 routes.MapHttpRoute(
@@ -125,6 +125,7 @@ namespace Thinktecture.IdentityServer.Web
             var authConfig = new AuthenticationConfiguration
             {
                 InheritHostClientIdentity = false,
+                RequireSsl = true,
                 ClaimsAuthenticationManager = new ClaimsTransformer()
             };
 
@@ -137,6 +138,7 @@ namespace Thinktecture.IdentityServer.Web
             var authConfig = new AuthenticationConfiguration
             {
                 InheritHostClientIdentity = false,
+                RequireSsl = true,
             };
 
             // accept arbitrary credentials on basic auth header,

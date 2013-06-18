@@ -44,7 +44,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
         public ProtocolsViewModel(Repositories.IConfigurationRepository ConfigurationRepository)
         {
             this.ConfigurationRepository = ConfigurationRepository;
-
+            
             for (int i = 0; i < protocolMap.Count; i++)
             {
                 var item = protocolMap[i];

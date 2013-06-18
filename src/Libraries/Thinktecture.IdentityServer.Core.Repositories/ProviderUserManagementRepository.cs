@@ -133,7 +133,7 @@ namespace Thinktecture.IdentityServer.Repositories
         public void SendConfirmationMail(string email, string confirmationKey)
         {
             try
-            {              
+            {
                 var url = GenerateConfirmationUrl(email, confirmationKey);
                 string body = string.Format("To confirm your Account click this link: {0}", url);
                 SendEmail(body, "account confirmation", email);

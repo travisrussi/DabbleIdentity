@@ -86,7 +86,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.LogException(LogLevel.Error, "Error while Creating User", e);
                     ModelState.AddModelError("", Resources.UserController.ErrorCreatingUser);
@@ -178,36 +178,5 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             return new HttpStatusCodeResult(System.Net.HttpStatusCode.Unauthorized);
         }
 
-        //public ActionResult ChangePassword(string username)
-        //{
-        //    UserPasswordModel model = new UserPasswordModel();
-        //    model.Username = username;
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult ChangePassword(UserPasswordModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            this.UserManagementRepository.SetPassword(model.Username, model.Password);
-        //            TempData["Message"] = Resources.UserController.ProfileUpdated;
-        //            return RedirectToAction("Index");
-        //        }
-        //        catch (ValidationException ex)
-        //        {
-        //            ModelState.AddModelError("", ex.Message);
-        //        }
-        //        catch
-        //        {
-        //            ModelState.AddModelError("", "Error updating password");
-        //        }
-        //    }
-
-        //    return View("ChangePassword", model);
-        //}
     }
 }

@@ -4,9 +4,9 @@
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(Create_cshtml.ErrorCreatingRole)
-    
-        <fieldset class="editor small">
-        <legend>Create Role</legend>
+
+    <fieldset class="editor small">
+        <legend>@Create_cshtml.CreateRole</legend>
 
         @Html.EditorForModel()
 

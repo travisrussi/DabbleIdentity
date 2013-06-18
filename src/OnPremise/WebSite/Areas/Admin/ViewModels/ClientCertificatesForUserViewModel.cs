@@ -11,7 +11,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
     {
         private Repositories.IClientCertificatesRepository clientCertificatesRepository;
         private Repositories.IUserManagementRepository userManagementRepository;
-
+        
         [Required]
         public string UserName { get; set; }
         public IEnumerable<ClientCertificate> Certificates { get; set; }
@@ -40,7 +40,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                 }).ToList();
             allnames.Insert(0, new SelectListItem { Text = Resources.ClientCertificatesForUserViewModel.ChooseItem, Value = "" });
             this.AllUserNames = allnames;
-
+            
             this.UserName = username;
             NewCertificate = new ClientCertificate { UserName = username };
             if (!IsNew)

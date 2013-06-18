@@ -163,8 +163,8 @@ namespace Thinktecture.IdentityServer.Protocols.AdfsIntegration
                 logger.Info("ADFS integration username authentication request for user: " + request.UserName);
 
                 token = bridge.AuthenticateUserName(
-                    request.UserName, 
-                    request.Password, 
+                    request.UserName,
+                    request.Password,
                     request.Scope);
             }
             catch (Exception ex)

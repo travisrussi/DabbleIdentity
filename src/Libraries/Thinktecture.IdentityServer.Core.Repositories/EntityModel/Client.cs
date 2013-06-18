@@ -9,7 +9,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
 
         [Required]
         public string Name { get; set; }
-
+        
         [Required]
         public string Description { get; set; }
 

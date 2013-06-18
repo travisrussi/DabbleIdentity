@@ -21,10 +21,12 @@ namespace Thinktecture.IdentityServer.TokenService
         private static readonly object _syncRoot = new object();
         private static Lazy<TokenServiceConfiguration> _configuration = new Lazy<TokenServiceConfiguration>();
         static Logger logger = LogManager.GetCurrentClassLogger();
+
         [Import]
         public IConfigurationRepository ConfigurationRepository { get; set; }
 
-        public TokenServiceConfiguration() : base()
+        public TokenServiceConfiguration()
+            : base()
         {
             logger.Info("Configuring token service");
             Container.Current.SatisfyImportsOnce(this);

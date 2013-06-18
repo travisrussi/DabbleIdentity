@@ -8,9 +8,9 @@ namespace Thinktecture.IdentityServer
         public AbsoluteUriAttribute()
         {
             this.ErrorMessageResourceName = "UriMustBeAbsolute";
-            this.ErrorMessageResourceType = typeof(Resources.AbsoluteUriAttribute);
+            this.ErrorMessageResourceType = typeof (Resources.AbsoluteUriAttribute);
         }
-
+        
         public override bool IsValid(object value)
         {
             if (value == null) return true;

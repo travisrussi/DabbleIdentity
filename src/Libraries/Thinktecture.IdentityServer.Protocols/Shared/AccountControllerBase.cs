@@ -31,7 +31,7 @@ namespace Thinktecture.IdentityServer.Protocols
             UserRepository = userRepository;
             ConfigurationRepository = configurationRepository;
         }
-        
+
         public ActionResult SignOut()
         {
             if (Request.IsAuthenticated)
@@ -46,9 +46,9 @@ namespace Thinktecture.IdentityServer.Protocols
         protected virtual ActionResult SignIn(string userName, string authenticationMethod, string returnUrl, bool isPersistent, int ttl, IEnumerable<Claim> additionalClaims = null)
         {
             new AuthenticationHelper().SetSessionToken(
-                userName, 
-                authenticationMethod, 
-                isPersistent, 
+                userName,
+                authenticationMethod,
+                isPersistent,
                 ttl,
                 additionalClaims);
 

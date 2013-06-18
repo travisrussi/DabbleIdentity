@@ -95,8 +95,8 @@ namespace Thinktecture.IdentityServer.TokenService
 
             // create scope
             var scope = new RequestDetailsScope(
-                details, 
-                SecurityTokenServiceConfiguration.SigningCredentials, 
+                details,
+                SecurityTokenServiceConfiguration.SigningCredentials,
                 ConfigurationRepository.Global.RequireEncryption);
 
             return scope;

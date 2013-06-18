@@ -82,7 +82,7 @@ namespace Thinktecture.IdentityServer.Repositories.Sql
         {
             using (var entities = IdentityServerConfigurationContext.Get())
             {
-                var item = entities.IdentityProviders.SingleOrDefault(x => x.ID == id);
+                var item = entities.IdentityProviders.SingleOrDefault(x=>x.ID == id);
                 if (item != null)
                 {
                     return item.ToDomainModel();

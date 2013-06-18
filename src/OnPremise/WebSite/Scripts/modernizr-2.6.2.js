@@ -1,5 +1,3 @@
-//ignore jslint start
-
 /*!
  * Modernizr v2.6.2
  * www.modernizr.com
@@ -1393,5 +1391,3 @@ window.Modernizr = (function( window, document, undefined ) {
     return Modernizr;
 
 })(this, this.document);
-
-//ignore jslint end

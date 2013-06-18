@@ -26,7 +26,7 @@ namespace Thinktecture.IdentityServer.TokenService
         {
             logger.Info("Beginning client certificate token validation and authentication for SOAP");
             Container.Current.SatisfyImportsOnce(this);
-            
+
             // call base class implementation for validation and claims generation 
             var identity = base.ValidateToken(token).First();
 

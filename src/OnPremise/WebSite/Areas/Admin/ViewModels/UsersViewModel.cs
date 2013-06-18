@@ -48,7 +48,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
                 return System.Web.Profile.ProfileManager.Enabled;
             }
         }
-
+        
         public bool IsOAuthRefreshTokenEnabled
         {
             get

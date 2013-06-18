@@ -23,7 +23,7 @@ using System.IdentityModel.Services;
 
 namespace Thinktecture.IdentityServer.Web.Controllers
 {
-    [InitializeSimpleMembership]
+
     public class AccountController : AccountControllerBase
     {
         [Import]

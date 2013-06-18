@@ -126,8 +126,8 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError("protocol.EncryptionCertificate", "EncryptionCertificate required when JwtAuthenticationEnabled is enabled.");
                 }
-            }
-
+            } 
+            
             if (ModelState.IsValid)
             {
                 try

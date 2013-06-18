@@ -30,7 +30,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var vm = new IdentityProvidersViewModel(this.identityProviderRepository);
             return View("Index", vm);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(string action, IPModel[] list)
@@ -41,7 +41,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             var vm = new IdentityProvidersViewModel(this.identityProviderRepository);
             return View("Index", vm);
         }
-        
+
         [ChildActionOnly]
         public ActionResult Menu()
         {
@@ -117,7 +117,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     ModelState["IssuerThumbprint"].Errors.Clear();
                     ModelState["IssuerThumbprint"].Value = new ValueProviderResult(model.IssuerThumbprint, model.IssuerThumbprint, ModelState["IssuerThumbprint"].Value.Culture);
                 }
-            } 
+            }
 
             if (ModelState.IsValid)
             {
@@ -134,7 +134,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     {
                         config.RegisterOauth2IdentityProvider(model);
                     }
-                    return RedirectToAction("IP", new { id=model.ID });
+                    return RedirectToAction("IP", new { id = model.ID });
                 }
                 catch (ValidationException ex)
                 {
@@ -145,12 +145,12 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", Resources.IPController.ErrorCreatingIdentityProvider);
                 }
             }
-            
+
             // if we're here, then we should clear name so the view thinks it's new
             model.ID = 0;
             return View("IP", model);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Update(IdentityProvider model, IPCertInputModel cert, string action)
@@ -194,7 +194,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", Resources.IPController.ErrorUpdatingIdentityProvider);
                 }
             }
-            
+
             return View("IP", model);
         }
     }

@@ -8,8 +8,8 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.ViewModels
         {
             this.ShowIdentityProviders = configuration.WSFederation.Enabled && configuration.WSFederation.EnableFederation;
             this.ShowOAuthClients = configuration.OAuth2.Enabled;
-            this.ShowOAuthTokens =
-                configuration.OAuth2.Enabled &&
+            this.ShowOAuthTokens = 
+                configuration.OAuth2.Enabled && 
                 (configuration.OAuth2.EnableCodeFlow || configuration.OAuth2.EnableResourceOwnerFlow);
             this.ShowClientCerts = configuration.Global.EnableClientCertificateAuthentication;
             this.ShowIdentityDelegation = configuration.WSTrust.Enabled && configuration.WSTrust.EnableDelegation;

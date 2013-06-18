@@ -58,15 +58,16 @@ namespace Thinktecture.IdentityServer.Models
         }
 
         [Display(Order = 8, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ProviderType")]
-        [UIHint("Enum")]  
+        [UIHint("Enum")]
         [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
         public OAuth2ProviderTypes? OAuth2ProviderType { get; set; }
 
-        [Display(Order = 9, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ClientID")]
+
+        [Display(Order = 9, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "ClientID")]
         [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
         public string ClientID { get; set; }
 
-        [Display(Order = 10, ResourceType = typeof(Resources.Models.IdentityProvider), Name = "ClientSecret")]
+        [Display(Order = 10, ResourceType = typeof (Resources.Models.IdentityProvider), Name = "ClientSecret")]
         [HtmlDivClassPropertiesAttribute(divClass = "oauth2")]
         public string ClientSecret { get; set; }
 

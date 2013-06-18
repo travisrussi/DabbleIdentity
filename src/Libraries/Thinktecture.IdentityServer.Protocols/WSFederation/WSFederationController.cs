@@ -92,7 +92,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             var mgr = new SignInSessionsManager(HttpContext, _cookieName);
             var realms = mgr.GetEndpoints();
             mgr.ClearEndpoints();
-            
+
             return View("Signout", realms);
         }
         #endregion

@@ -31,7 +31,6 @@ namespace Thinktecture.IdentityServer.Models
         [Display(ResourceType = typeof(Resources.Models.RelyingParty), Name = "TokenLifeTime", Description = "TokenLifeTimeDescription")]
         public int TokenLifeTime { get; set; }
 
-        //TODO check if replyTo shows if leave empty uses custom replyto
         [Display(ResourceType = typeof(Resources.Models.RelyingParty), Name = "ReplyTo", Description = "ReplyToDescription")]
         [AbsoluteUri]
         public Uri ReplyTo { get; set; }

@@ -19,7 +19,7 @@ using WebMatrix.WebData;
 
 namespace Thinktecture.IdentityServer.Web.Controllers
 {
-    [InitializeSimpleMembership]
+
     public class InitialConfigurationController : Controller
     {
         [Import]

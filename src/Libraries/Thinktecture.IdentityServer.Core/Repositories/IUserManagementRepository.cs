@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Thinktecture.IdentityServer.Models;
+﻿using System.Collections.Generic;
 
 namespace Thinktecture.IdentityServer.Repositories
 {
@@ -23,19 +20,19 @@ namespace Thinktecture.IdentityServer.Repositories
         void DeleteOAuthAccount(string provider, string providerUserId);
         void SetUserDirty(string email);
 
-        UserProfile GetByUsername(string username);
-        UserProfile GetByExternalKey(string externalKey);
+        Thinktecture.IdentityServer.Models.UserProfile GetByUsername(string username);
+        Thinktecture.IdentityServer.Models.UserProfile GetByExternalKey(string externalKey);
 
         void Update(Thinktecture.IdentityServer.Models.UserProfile model);
         IEnumerable<Models.UserProfile> VerifiedDirtyProfiles();
         Thinktecture.IdentityServer.Models.UserProfile GetUserProfileByConfirmationId(string id, string user);
         Thinktecture.IdentityServer.Models.UserProfile GetUserProfileByPasswordResetId(string id);
 
-        bool ValidateTemporarilyValidGeneratedToken(string userName, string Token, EmailFunctionType type);
+        bool ValidateTemporarilyValidGeneratedToken(string userName, string Token, Thinktecture.IdentityServer.Models.EmailFunctionType type);
         bool ResetPassword(string token, string password);
         bool ValidateEmailChange(string token, string email);
         void RemoveTemporaryValidToken(string userName, string token);
-        bool CheckUserForValidatedTokenOrValidateToken(string email, string token, EmailFunctionType type);
+        bool CheckUserForValidatedTokenOrValidateToken(string email, string token, Thinktecture.IdentityServer.Models.EmailFunctionType type);
 
         void SendConfirmationMail(string email, string token);
         void SendPasswordResetMail(string email);
