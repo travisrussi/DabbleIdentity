@@ -71,6 +71,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\DotNetOpenAuth.Core.4.2.1.13026\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -111,9 +112,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thinktecture.IdentityModel, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Thinktecture.IdentityModel, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Thinktecture.IdentityModel.3.1.1\lib\net45\Thinktecture.IdentityModel.dll</HintPath>
+      <HintPath>..\..\..\packages\Thinktecture.IdentityModel.3.4.1\lib\net45\Thinktecture.IdentityModel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +130,11 @@
     <Compile Include="Models\ClaimAttribute.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\ClientCertificate.cs" />
+    <Compile Include="Models\ClientSecretTypes.cs" />
     <Compile Include="Models\CodeToken.cs" />
     <Compile Include="Models\CodeTokenType.cs" />
     <Compile Include="Models\Configuration\AdfsIntegrationConfiguration.cs" />
+    <Compile Include="Models\Configuration\OpenIdConnectConfiguration.cs" />
     <Compile Include="Models\Configuration\SimpleHttpConfiguration.cs" />
     <Compile Include="Models\Configuration\KeyMaterialConfiguration.cs" />
     <Compile Include="Models\Configuration\OAuth2Configuration.cs" />
@@ -139,6 +142,9 @@
     <Compile Include="Models\Configuration\ProtocolConfiguration.cs" />
     <Compile Include="Models\EmailFunctionType.cs" />
     <Compile Include="Models\MapperAttribute.cs" />
+    <Compile Include="Models\OpenIdConnectClient.cs" />
+    <Compile Include="Models\OpenIdConnectFlows.cs" />
+    <Compile Include="Models\StoredGrant.cs" />
     <Compile Include="Models\OAuth2ProviderTypes.cs" />
     <Compile Include="Models\DelegationSetting.cs" />
     <Compile Include="Endpoints.cs" />
@@ -148,6 +154,9 @@
     <Compile Include="Models\Configuration\DiagnosticsConfiguration.cs" />
     <Compile Include="Models\OpenIdProviderTypes.cs" />
     <Compile Include="Models\UserProfile.cs" />
+    <Compile Include="Models\StoredGrantType.cs" />
+    <Compile Include="Models\TokenType.cs" />
+    <Compile Include="Repositories\IOpenIdConnectClientsRepository.cs" />
     <Compile Include="Repositories\IClientsRepository.cs" />
     <Compile Include="Repositories\ICodeTokenRepository.cs" />
     <Compile Include="Repositories\IConfigurationRepository.cs" />
@@ -156,6 +165,7 @@
     <Compile Include="Repositories\IClientCertificatesRepository.cs" />
     <Compile Include="Repositories\ICacheRepository.cs" />
     <Compile Include="Repositories\IDelegationRepository.cs" />
+    <Compile Include="Repositories\IStoredGrantRepository.cs" />
     <Compile Include="Repositories\IIdentityProviderRepository.cs" />
     <Compile Include="Models\Configuration\GlobalConfiguration.cs" />
     <Compile Include="Models\Configuration\WSTrustConfiguration.cs" />

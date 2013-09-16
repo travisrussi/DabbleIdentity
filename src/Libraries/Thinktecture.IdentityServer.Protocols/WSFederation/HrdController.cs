@@ -8,7 +8,9 @@ using Microsoft.Web.WebPages.OAuth;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.IdentityModel.Configuration;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Services;
 using System.IdentityModel.Services.Configuration;
@@ -100,10 +102,19 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             var fam = new WSFederationAuthenticationModule();
             fam.FederationConfiguration = new FederationConfiguration();
 
+            if (ConfigurationRepository.Keys.DecryptionCertificate != null)
+            {
+                var idConfig = new IdentityConfiguration();
+                
+                idConfig.ServiceTokenResolver = SecurityTokenResolver.CreateDefaultSecurityTokenResolver(
+                     new ReadOnlyCollection<SecurityToken>(new SecurityToken[] { new X509SecurityToken(ConfigurationRepository.Keys.DecryptionCertificate) }), false);
+                fam.FederationConfiguration.IdentityConfiguration = idConfig;
+            }
+
             if (fam.CanReadSignInResponse(Request))
             {
-                var responseMessage = fam.GetSignInResponseMessage(Request);
-                return ProcessWSFedSignInResponse(responseMessage, fam.GetSecurityToken(Request));
+                var token = fam.GetSecurityToken(Request);
+                return ProcessWSFedSignInResponse(fam.GetSignInResponseMessage(Request), token);
             }
 
             return View("Error");
@@ -151,7 +162,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             }
 
             return View("Error");
-        }
+        } 
 
         [AllowAnonymous]
         [ActionName("OAuthTokenCallback")]
@@ -371,7 +382,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
 
             return new WSFederationResult(wsFedResponse, requireSsl: ConfigurationRepository.WSFederation.RequireSslForReplyTo);
         }
-
+        
         IEnumerable<IdentityProvider> GetEnabledWSIdentityProviders()
         {
             return IdentityProviderRepository.GetAll().Where(
@@ -389,7 +400,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
             var config = new SecurityTokenHandlerConfiguration();
             config.AudienceRestriction.AudienceMode = AudienceUriMode.Always;
             config.AudienceRestriction.AllowedAudienceUris.Add(new Uri(ConfigurationRepository.Global.IssuerUri));
-
+            
             var registry = new IdentityProviderIssuerNameRegistry(GetEnabledWSIdentityProviders());
             config.IssuerNameRegistry = registry;
             config.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.None;

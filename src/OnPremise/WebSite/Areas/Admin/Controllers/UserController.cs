@@ -35,23 +35,22 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             return RedirectToAction("Index", new { filter = filter });
         }
 
-        public ActionResult Index(string filter = null)
+        public ActionResult Index(int page = 1, string filter = null)
         {
-            var vm = new UsersViewModel(UserManagementRepository, filter);
+            var vm = new UsersViewModel(UserManagementRepository, page, filter);
             return View("Index", vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Index(string action, UserDeleteModel[] list)
+        public ActionResult Index(int page, string filter, string action, UserDeleteModel[] list)
         {
             if (action == "new") return Create();
-            if (action == "delete") return Delete(list);
+            if (action == "delete") return Delete(page, filter, list);
 
             ModelState.AddModelError("", Resources.UserController.InvalidAction);
-            var vm = new UsersViewModel(UserManagementRepository, null);
+            var vm = new UsersViewModel(UserManagementRepository, page, filter);
             return View("Index", vm);
-
         }
 
         public ActionResult Create()
@@ -80,7 +79,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                         }
                     }
                     TempData["Message"] = Resources.UserController.UserCreated;
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", new { filter = model.Username });
                 }
                 catch (ValidationException ex)
                 {
@@ -96,7 +95,7 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
             return View("Create", model);
         }
 
-        private ActionResult Delete(UserDeleteModel[] list)
+        private ActionResult Delete(int page, string filter, UserDeleteModel[] list)
         {
             if (ModelState.IsValid)
             {
@@ -107,19 +106,18 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                         this.UserManagementRepository.DeleteUser(name);
                     }
                     TempData["Message"] = Resources.UserController.UsersDeleted;
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", new { page, filter });
                 }
                 catch (ValidationException ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
-                catch (Exception e)
+                catch
                 {
-                    logger.LogException(LogLevel.Error, "Error while Deleting User", e);
                     ModelState.AddModelError("", Resources.UserController.ErrorDeletingUser);
                 }
             }
-            return Index();
+            return Index(page, filter);
         }
 
         public ActionResult Roles(string username)

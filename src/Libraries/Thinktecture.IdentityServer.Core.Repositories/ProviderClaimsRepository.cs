@@ -20,7 +20,7 @@ namespace Thinktecture.IdentityServer.Repositories
     {
         private const string ProfileClaimPrefix = "http://identityserver.thinktecture.com/claims/profileclaims/";
 
-        public IEnumerable<Claim> GetClaims(ClaimsPrincipal principal, RequestDetails requestDetails)
+        public virtual IEnumerable<Claim> GetClaims(ClaimsPrincipal principal, RequestDetails requestDetails)
         {
             var userName = principal.Identity.Name;
             var claims = new List<Claim>(from c in principal.Claims select c);
@@ -29,7 +29,7 @@ namespace Thinktecture.IdentityServer.Repositories
             string email = userName;
             if (!String.IsNullOrEmpty(email))
             {
-                claims.Add(new Claim(ClaimTypes.Email, email));
+                    claims.Add(new Claim(ClaimTypes.Email, email));                
             }
 
             // roles
@@ -39,7 +39,7 @@ namespace Thinktecture.IdentityServer.Repositories
             claims.AddRange(GetProfileClaims(userName));
             return claims;
         }
-        //TODO check if this new Claim System works
+
         protected virtual IEnumerable<Claim> GetProfileClaims(string userName)
         {
             var claims = new List<Claim>();
@@ -83,7 +83,7 @@ namespace Thinktecture.IdentityServer.Repositories
         }
 
 
-        public IEnumerable<string> GetSupportedClaimTypes()
+        public virtual IEnumerable<string> GetSupportedClaimTypes()
         {
             var claimTypes = new List<string>
             {
@@ -97,7 +97,7 @@ namespace Thinktecture.IdentityServer.Repositories
                 foreach (PropertyInfo prop in typeof(UserProfile).GetProperties())
                 {
                     var exist = prop.GetCustomAttribute<ClaimAttribute>();
-                    if (exist != null)
+                    if (exist != null) 
                     {
                         claimTypes.Add(GetProfileClaimType(prop.Name.ToLowerInvariant()));
                     }

@@ -65,24 +65,22 @@ namespace Thinktecture.IdentityServer
 
         protected virtual bool AuthorizeTokenIssuance(Collection<Claim> resource, ClaimsIdentity id)
         {
-            if (!ConfigurationRepository.Global.EnforceUsersGroupMembership)
+            if (!id.IsAuthenticated)
             {
-                var authResult = id.IsAuthenticated;
-                if (!authResult)
+                logger.Error("Authorization for token issuance failed because the user is anonymous");                
+                return false;
+            }
+
+            if (ConfigurationRepository.Global.EnforceUsersGroupMembership)
+            {
+                var roleResult = id.HasClaim(ClaimTypes.Role, Constants.Roles.IdentityServerUsers);
+                if (!roleResult)
                 {
-                    logger.Error("Authorization for token issuance failed because the user is anonymous");
+                     logger.Error(string.Format("Authorization for token issuance failed because user {0} is not in the {1} role", id.Name, Constants.Roles.IdentityServerUsers));
                 }
-
-                return authResult;
+                return roleResult;
             }
-
-            var roleResult = id.HasClaim(ClaimTypes.Role, Constants.Roles.IdentityServerUsers);
-            if (!roleResult)
-            {
-                logger.Error(string.Format("Authorization for token issuance failed because user {0} is not in the {1} role", id.Name, Constants.Roles.IdentityServerUsers));
-            }
-
-            return roleResult;
+            return true;
         }
 
         protected virtual bool AuthorizeAdministration(Collection<Claim> resource, ClaimsIdentity id)

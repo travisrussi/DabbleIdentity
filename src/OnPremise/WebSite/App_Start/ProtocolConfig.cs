@@ -1,4 +1,4 @@
-﻿using BrockAllen.OAuth2;
+﻿using System;
 using System.ServiceModel.Activation;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -15,11 +15,11 @@ namespace Thinktecture.IdentityServer.Web
     {
         public static void RegisterProtocols(HttpConfiguration httpConfiguration, RouteCollection routes, IConfigurationRepository configuration, IUserRepository users, IRelyingPartyRepository relyingParties)
         {
-            var basicAuthConfig = CreateBasicAuthConfig(users);
-            var clientAuthConfig = CreateClientAuthConfig();
-
             // require SSL for all web api endpoints
-            httpConfiguration.MessageHandlers.Add(new RequireHttpsHandler());
+            if (!configuration.Global.DisableSSL)
+            {
+                httpConfiguration.MessageHandlers.Add(new RequireHttpsHandler());
+            }
 
             #region Protocols
             // federation metadata
@@ -56,9 +56,8 @@ namespace Thinktecture.IdentityServer.Web
                     new { controller = "Hrd", action = "Select" },
                     new { method = new HttpMethodConstraint("POST") }
                 );
-                
+
                 // callback endpoint
-                OAuth2Client.OAuthCallbackUrl = Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback;
                 routes.MapRoute(
                     "oauth2callback",
                     Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Callback,
@@ -72,17 +71,47 @@ namespace Thinktecture.IdentityServer.Web
                 // authorize endpoint
                 routes.MapRoute(
                     "oauth2authorize",
-                    Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Authorize,
+                    Endpoints.Paths.OAuth2Authorize,
                     new { controller = "OAuth2Authorize", action = "index" }
                 );
 
                 // token endpoint
                 routes.MapHttpRoute(
                     name: "oauth2token",
-                    routeTemplate: Thinktecture.IdentityServer.Endpoints.Paths.OAuth2Token,
+                    routeTemplate: Endpoints.Paths.OAuth2Token,
                     defaults: new { controller = "OAuth2Token" },
                     constraints: null,
-                    handler: new AuthenticationHandler(clientAuthConfig, httpConfiguration)
+                    handler: new AuthenticationHandler(CreateClientAuthConfig(configuration), httpConfiguration)
+                );
+            }
+
+            // open id connect
+            if (configuration.OpenIdConnect.Enabled &&
+                configuration.Keys.SigningCertificate != null)
+            {
+                // authorize endpoint
+                routes.MapRoute(
+                    "oidcauthorize",
+                    Endpoints.Paths.OidcAuthorize,
+                    new { controller = "OidcAuthorize", action = "index" }
+                );
+
+                // token endpoint
+                routes.MapHttpRoute(
+                    name: "oidctoken",
+                    routeTemplate: Endpoints.Paths.OidcToken,
+                    defaults: new { controller = "OidcToken" },
+                    constraints: null,
+                    handler: new AuthenticationHandler(CreateClientAuthConfig(configuration), httpConfiguration)
+                );
+
+                // userinfo endpoint
+                routes.MapHttpRoute(
+                    name: "oidcuserinfo",
+                    routeTemplate: Endpoints.Paths.OidcUserInfo,
+                    defaults: new { controller = "OidcUserInfo" },
+                    constraints: null,
+                    handler: new AuthenticationHandler(CreateUserInfoAuthConfig(configuration), httpConfiguration)
                 );
             }
 
@@ -104,7 +133,7 @@ namespace Thinktecture.IdentityServer.Web
                     routeTemplate: Thinktecture.IdentityServer.Endpoints.Paths.SimpleHttp,
                     defaults: new { controller = "SimpleHttp" },
                     constraints: null,
-                    handler: new AuthenticationHandler(basicAuthConfig, httpConfiguration)
+                    handler: new AuthenticationHandler(CreateBasicAuthConfig(configuration, users), httpConfiguration)
                 );
             }
 
@@ -120,12 +149,12 @@ namespace Thinktecture.IdentityServer.Web
             #endregion
         }
 
-        public static AuthenticationConfiguration CreateBasicAuthConfig(IUserRepository userRepository)
+        public static AuthenticationConfiguration CreateBasicAuthConfig(IConfigurationRepository configuration, IUserRepository userRepository)
         {
             var authConfig = new AuthenticationConfiguration
             {
                 InheritHostClientIdentity = false,
-                RequireSsl = true,
+                RequireSsl = !configuration.Global.DisableSSL,
                 ClaimsAuthenticationManager = new ClaimsTransformer()
             };
 
@@ -133,18 +162,34 @@ namespace Thinktecture.IdentityServer.Web
             return authConfig;
         }
 
-        public static AuthenticationConfiguration CreateClientAuthConfig()
+        public static AuthenticationConfiguration CreateClientAuthConfig(IConfigurationRepository configuration)
         {
             var authConfig = new AuthenticationConfiguration
             {
                 InheritHostClientIdentity = false,
-                RequireSsl = true,
+                RequireSsl = !configuration.Global.DisableSSL,
             };
 
             // accept arbitrary credentials on basic auth header,
             // validation will be done in the protocol endpoint
             authConfig.AddBasicAuthentication((id, secret) => true, retainPassword: true);
             return authConfig;
+        }
+
+        public static AuthenticationConfiguration CreateUserInfoAuthConfig(IConfigurationRepository configuration)
+        {
+            var userInfoAuth = new AuthenticationConfiguration
+            {
+                RequireSsl = !configuration.Global.DisableSSL,
+                InheritHostClientIdentity = false
+            };
+
+            userInfoAuth.AddJsonWebToken(
+                issuer: configuration.Global.IssuerUri,
+                audience: configuration.Global.IssuerUri + "/userinfo",
+                signingCertificate: configuration.Keys.SigningCertificate);
+
+            return userInfoAuth;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
 
         public ActionResult Issue()
         {
-            logger.Info("WS-Federation endpoint called.");
+            logger.Info("WS-Federation endpoint called."); 
 
             if (!ConfigurationRepository.WSFederation.Enabled && ConfigurationRepository.WSFederation.EnableAuthentication)
             {

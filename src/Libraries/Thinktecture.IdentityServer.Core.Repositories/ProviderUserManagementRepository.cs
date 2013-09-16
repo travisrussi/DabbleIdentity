@@ -399,7 +399,10 @@ namespace Thinktecture.IdentityServer.Repositories
                 Roles.RemoveUserFromRoles(userName, userRoles);
             }
 
-            Roles.AddUserToRoles(userName, roles.ToArray());
+            if (roles.Any())
+            {
+                Roles.AddUserToRoles(userName, roles.ToArray());
+            }
         }
 
         public IEnumerable<string> GetRolesForUser(string userName)
@@ -432,12 +435,27 @@ namespace Thinktecture.IdentityServer.Repositories
             { }
         }
 
-        public IEnumerable<string> GetUsers()
+        public IEnumerable<string> GetUsers(int start, int count, out int totalCount)
         {
             using (var userContext = new UsersContext())
             {
                 var items = userContext.UserProfiles.Select(user => user.Email).ToList();
+                totalCount = items.Count();
                 return items;
+            }
+        }
+
+        public IEnumerable<string> GetUsers(string filter, int start, int count, out int totalCount)
+        {
+            using (var userContext = new UsersContext())
+            {
+                var query =
+                    from user in userContext.UserProfiles
+                    where user.Email.Contains(filter) ||
+                          (user.Email != null && user.Email.Contains(filter))
+                    select user.Email;
+                totalCount = query.Count();
+                return query.OrderBy(e => e).Skip(start).Take(count).ToList();
             }
         }
 

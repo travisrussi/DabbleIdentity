@@ -83,12 +83,12 @@ namespace Thinktecture.IdentityServer.TokenService
             };
 
             AnalyzeRst(rst, details);
-            AnalyzeTokenType(rst, details);
             AnalyzeKeyType(rst);
             AnalyzeRealm(rst, details);
             AnalyzeOperationContext(details);
             AnalyzeDelegation(rst, details);
             AnalyzeRelyingParty(details);
+            AnalyzeTokenType(rst, details);
             AnalyzeEncryption(details);
             AnalyzeReplyTo(details);
             AnalyzeSsl(details);
@@ -210,15 +210,37 @@ namespace Thinktecture.IdentityServer.TokenService
 
         protected virtual void AnalyzeTokenType(RequestSecurityToken rst, RequestDetails details)
         {
-            if (string.IsNullOrWhiteSpace(rst.TokenType))
+            if (!string.IsNullOrWhiteSpace(rst.TokenType)) 
             {
-                details.TokenType = _configuration.Global.DefaultWSTokenType;
-                logger.Info("Token Type: not specified, falling back to default token type");
+                details.TokenType = rst.TokenType;
+                logger.Info("Token type set from RST: " + details.TokenType);
+                return;
+            }
+
+            if (details.IsKnownRealm && details.RelyingPartyRegistration.TokenType != null)
+            {
+                switch (details.RelyingPartyRegistration.TokenType.Value)
+                {
+                    case TokenType.SAML11:
+                        details.TokenType = TokenTypes.Saml11TokenProfile11;
+                        break;
+                    case TokenType.SAML20:
+                        details.TokenType = TokenTypes.Saml2TokenProfile11;
+                        break;
+                    case TokenType.JWT:
+                        details.TokenType = TokenTypes.JsonWebToken;
+                        break;
+                    default:
+                        string error = "Invalid token type: " + details.RelyingPartyRegistration.TokenType.Value.ToString();
+                        logger.Error(error);
+                        throw new InvalidRequestException(error);
+                }               
+                logger.Info("Token type set from RP registration: " + details.TokenType);
             }
             else
             {
-                logger.Info("Token Type: " + rst.TokenType);
-                details.TokenType = rst.TokenType;
+                details.TokenType = _configuration.Global.DefaultWSTokenType;
+                logger.Info("Token Type not specified, using default token type");
             }
         }
 

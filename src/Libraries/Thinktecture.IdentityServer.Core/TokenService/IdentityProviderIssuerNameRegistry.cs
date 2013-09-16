@@ -12,7 +12,7 @@ namespace Thinktecture.IdentityServer.TokenService
 
         public IdentityProviderIssuerNameRegistry(IEnumerable<IdentityProvider> identityProviders)
         {
-            _idps = identityProviders;
+            _idps = identityProviders; 
         }
 
         public override string GetIssuerName(SecurityToken securityToken)

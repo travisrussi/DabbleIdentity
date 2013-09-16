@@ -6,8 +6,9 @@ namespace Thinktecture.IdentityServer.Repositories
     {
         void CreateUser(string userName, string password);
         void DeleteUser(string userName);
-        IEnumerable<string> GetUsers();
-        IEnumerable<string> GetUsers(string filter);
+        
+        IEnumerable<string> GetUsers(int start, int count, out int totalCount);
+        IEnumerable<string> GetUsers(string filter, int start, int count, out int totalCount);
 
         void SetRolesForUser(string userName, IEnumerable<string> roles);
 

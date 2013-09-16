@@ -53,10 +53,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\BrockAllen.CookieTempData.dll.1.2.1\lib\net45\BrockAllen.CookieTempData.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.OAuth2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\BrockAllen.OAuth2.2.1.0\lib\net45\BrockAllen.OAuth2.dll</HintPath>
-    </Reference>
     <Reference Include="CavemanTools, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\CavemanTools.2.0.0\lib\Net40\CavemanTools.dll</HintPath>
@@ -99,6 +95,7 @@
     </Reference>
     <Reference Include="Elmah.Mvc">
       <HintPath>..\..\..\packages\Elmah.MVC.2.0.2\lib\net40\Elmah.Mvc.dll</HintPath>
+      <HintPath>..\..\..\packages\BrockAllen.OAuth2.2.2.0\lib\net45\BrockAllen.OAuth2.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -225,7 +222,7 @@
     </Reference>
     <Reference Include="Thinktecture.IdentityModel, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Thinktecture.IdentityModel.3.1.1\lib\net45\Thinktecture.IdentityModel.dll</HintPath>
+      <HintPath>..\..\..\packages\Thinktecture.IdentityModel.3.4.1\lib\net45\Thinktecture.IdentityModel.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -294,6 +291,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ShowConsent.Mobile.cshtml.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_LocalResources\OidcAuthorize\Consent.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Consent.resx</DependentUpon>
+    </Compile>
     <Compile Include="App_LocalResources\Shared\Confirm.cshtml.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -303,11 +305,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Error.cshtml.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_LocalResources\Shared\SignedOut.cshtml.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SignedOut.cshtml.resx</DependentUpon>
     </Compile>
     <Compile Include="App_LocalResources\Shared\SignOut.cshtml.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -510,6 +507,7 @@
       <DependentUpon>_ViewStart.cshtml.resx</DependentUpon>
     </Compile>
     <Compile Include="Areas\Admin\Controllers\ClientCertificateController.cs" />
+    <Compile Include="Areas\Admin\Controllers\OpenIdConnectClientController.cs" />
     <Compile Include="Areas\Admin\Controllers\OAuthClientController.cs" />
     <Compile Include="Areas\Admin\Controllers\DelegationController.cs" />
     <Compile Include="Areas\Admin\Controllers\DiagnosticsController.cs" />
@@ -553,6 +551,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ClientCertificatesViewModel.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Admin\Resources\OpenIdConnectClientController.Designer.cs">
+      <DependentUpon>OpenIdConnectClientController.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Areas\Admin\Resources\ProfilePropertyViewModel.Designer.cs">
       <DependentUpon>ProfilePropertyViewModel.resx</DependentUpon>
@@ -719,6 +722,8 @@
     <Compile Include="Areas\Admin\ViewModels\ClientCertificatesForUserViewModel.cs" />
     <Compile Include="Areas\Admin\ViewModels\ClientCertificatesViewModel.cs" />
     <Compile Include="Areas\Admin\ViewModels\CertificateInputModel.cs" />
+    <Compile Include="Areas\Admin\ViewModels\OpenIdConnectClientIndexViewModel.cs" />
+    <Compile Include="Areas\Admin\ViewModels\OpenIdConnectClientViewModel.cs" />
     <Compile Include="Areas\Admin\ViewModels\MenuViewModel.cs" />
     <Compile Include="Areas\Admin\ViewModels\OAuthClientIndexViewModel.cs" />
     <Compile Include="Areas\Admin\ViewModels\DelegationSettingsForUserInputModel.cs" />
@@ -791,6 +796,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\dummy.txt" />
+    <EmbeddedResource Include="App_LocalResources\OidcAuthorize\Consent.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Consent.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Areas\Admin\Resources\CertificateInputModel.fr.resx">
       <DependentUpon>CertificateInputModel.resx</DependentUpon>
     </EmbeddedResource>
@@ -832,6 +841,13 @@
     <EmbeddedResource Include="Areas\Admin\Resources\ClientCertificatesViewModel.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ClientCertificatesViewModel.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Admin\Resources\Copy of OAuthClientController.fr.resx">
+      <DependentUpon>OpenIdConnectClientController.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\Admin\Resources\OpenIdConnectClientController.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>OpenIdConnectClientController.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Admin\Resources\ProfilePropertyViewModel.fr.resx">
       <DependentUpon>ProfilePropertyViewModel.resx</DependentUpon>
@@ -1229,12 +1245,13 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Content\themes\default\icons.png" />
     <Content Include="Global.asax" />
-    <Content Include="Configuration\connectionStrings.config" />
+    <Content Include="Configuration\connectionStrings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Configuration\identity.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Configuration\identityServices.config" />
-    <Content Include="Configuration\profile.config" />
     <Content Include="Configuration\repositories.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1322,6 +1339,8 @@
     <Content Include="Content\themes\default\bootswatch.less" />
     <Content Include="Content\themes\default\Site.less" />
     <Content Include="Content\themes\default\variables.less" />
+    <Content Include="Areas\Admin\Views\OpenIdConnectClient\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\OpenIdConnectClient\Index.cshtml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
@@ -1363,6 +1382,10 @@
     <Content Include="Views\HRD\IdentityProviders.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Enum.cshtml" />
     <Content Include="Views\Shared\InfoMessage.cshtml" />
+    <Content Include="Views\OAuth2Authorize\Error.Mobile.cshtml" />
+    <Content Include="Views\OAuth2Authorize\ShowConsent.Mobile.cshtml" />
+    <Content Include="Views\OidcAuthorize\Consent.cshtml" />
+    <Content Include="Views\OidcAuthorize\ValidationError.cshtml" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />
@@ -1401,7 +1424,6 @@
     <Content Include="Views\InitialConfiguration\Index.cshtml" />
     <Content Include="Views\Shared\Confirm.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\SignedOut.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\SignOut.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -1425,9 +1447,7 @@
       <Name>Thinktecture.IdentityServer.Protocols</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_GlobalResources\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Areas\Admin\App_LocalResources\ClientCertificate\Configure.cshtml.fr.resx">
       <DependentUpon>Configure.cshtml.resx</DependentUpon>
@@ -1727,13 +1747,6 @@
     <EmbeddedResource Include="App_LocalResources\Shared\Error.cshtml.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Error.cshtml.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_LocalResources\Shared\SignedOut.cshtml.fr.resx">
-      <DependentUpon>SignedOut.cshtml.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_LocalResources\Shared\SignedOut.cshtml.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>SignedOut.cshtml.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="App_LocalResources\Shared\SignOut.cshtml.fr.resx">
       <DependentUpon>SignOut.cshtml.resx</DependentUpon>

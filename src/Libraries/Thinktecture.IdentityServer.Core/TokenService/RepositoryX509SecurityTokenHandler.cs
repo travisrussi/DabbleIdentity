@@ -24,7 +24,10 @@ namespace Thinktecture.IdentityServer.TokenService
 
         public override ReadOnlyCollection<ClaimsIdentity> ValidateToken(SecurityToken token)
         {
+            this.Configuration.IssuerNameRegistry = new ClientCertificateIssuerNameRegistry();
+
             logger.Info("Beginning client certificate token validation and authentication for SOAP");
+
             Container.Current.SatisfyImportsOnce(this);
 
             // call base class implementation for validation and claims generation 

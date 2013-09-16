@@ -424,6 +424,7 @@ namespace Thinktecture.IdentityServer.Web.Controllers
 
         // handles the signin
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult SignIn(CombinationLoginRegisterModel model)
         {
 

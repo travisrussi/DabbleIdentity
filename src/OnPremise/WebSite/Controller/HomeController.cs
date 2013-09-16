@@ -3,6 +3,7 @@
  * see license.txt
  */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Web.Mvc;
@@ -39,8 +40,13 @@ namespace Thinktecture.IdentityServer.Web.Controllers
 
         public ActionResult AppIntegration()
         {
+            var host = Configuration.Global.PublicHostName;
+            if (String.IsNullOrWhiteSpace(host))
+            {
+                host = HttpContext.Request.Headers["Host"];
+            }
             var endpoints = Endpoints.Create(
-                               HttpContext.Request.Headers["Host"],
+                               host,
                                HttpContext.Request.ApplicationPath,
                                Configuration.Global.HttpPort,
                                Configuration.Global.HttpsPort);
@@ -91,6 +97,14 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                         list.Add("WS-Trust mixed mode security (client certificate)", endpoints.WSTrustMixedCertificate.AbsoluteUri);
                     }
                 }
+            }
+
+            // openid connect
+            if (Configuration.OpenIdConnect.Enabled)
+            {
+                list.Add("OpenID Connect Authorize", endpoints.OidcAuthorize.AbsoluteUri);
+                list.Add("OpenID Connect Token", endpoints.OidcToken.AbsoluteUri);
+                list.Add("OpenID Connect UserInfo", endpoints.OidcUserInfo.AbsoluteUri);
             }
 
             // oauth2
