@@ -785,7 +785,6 @@
     <Compile Include="Utility\AuthConfig.cs" />
     <Compile Include="Utility\ElmahTarget.cs" />
     <Compile Include="Utility\HtmlHelpers.cs" />
-    <Compile Include="Utility\ApiTokenValidator.cs" />
     <Compile Include="ViewModels\AccountModels.cs" />
     <Compile Include="ViewModels\InitialConfigurationModel.cs" />
     <Compile Include="ViewModels\SignInModel.cs" />
