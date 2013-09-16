@@ -20,6 +20,30 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Thinktecture.IdentityServer.Protocols", "src\Libraries\Thinktecture.IdentityServer.Protocols\Thinktecture.IdentityServer.Protocols.csproj", "{C129C90C-774C-47D7-A19E-57B31C87AE18}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs2012.macaw.nl/kd
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = src\\Tests\\Tests.csproj
+		SccProjectName1 = src/Tests
+		SccLocalPath1 = src\\Tests
+		SccProjectUniqueName2 = src\\Libraries\\Thinktecture.IdentityServer.Core\\Thinktecture.IdentityServer.Core.csproj
+		SccProjectTopLevelParentUniqueName2 = Thinktecture.IdentityServer.sln
+		SccProjectName2 = src/Libraries/Thinktecture.IdentityServer.Core
+		SccLocalPath2 = src\\Libraries\\Thinktecture.IdentityServer.Core
+		SccProjectUniqueName3 = src\\Libraries\\Thinktecture.IdentityServer.Core.Repositories\\Thinktecture.IdentityServer.Core.Repositories.csproj
+		SccProjectTopLevelParentUniqueName3 = Thinktecture.IdentityServer.sln
+		SccProjectName3 = src/Libraries/Thinktecture.IdentityServer.Core.Repositories
+		SccLocalPath3 = src\\Libraries\\Thinktecture.IdentityServer.Core.Repositories
+		SccProjectUniqueName4 = src\\Libraries\\Thinktecture.IdentityServer.Protocols\\Thinktecture.IdentityServer.Protocols.csproj
+		SccProjectTopLevelParentUniqueName4 = Thinktecture.IdentityServer.sln
+		SccProjectName4 = src/Libraries/Thinktecture.IdentityServer.Protocols
+		SccLocalPath4 = src\\Libraries\\Thinktecture.IdentityServer.Protocols
+		SccProjectUniqueName5 = src\\OnPremise\\WebSite\\WebSite.csproj
+		SccProjectName5 = src/OnPremise/WebSite
+		SccLocalPath5 = src\\OnPremise\\WebSite
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -53,5 +77,6 @@ Global
 		{38CE5C59-909E-4DA6-8E1D-7EEE7312CA9A} = {2B1ED56F-D37A-44C0-ABED-CD45218E59D3}
 		{9658F86F-3059-4731-9EB0-5F67A4FF1A8A} = {2B1ED56F-D37A-44C0-ABED-CD45218E59D3}
 		{C129C90C-774C-47D7-A19E-57B31C87AE18} = {2B1ED56F-D37A-44C0-ABED-CD45218E59D3}
+		{D201FE12-A7CD-4344-B90A-7FBF2CD9C589} = {2B1ED56F-D37A-44C0-ABED-CD45218E59D3}
 	EndGlobalSection
 EndGlobal

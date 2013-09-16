@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Web.Http;
+using System.Web.Mvc;
 using System.Web.Routing;
 using Thinktecture.IdentityServer.Repositories;
 
@@ -8,6 +9,11 @@ namespace Thinktecture.IdentityServer.Web
     {
         public static void RegisterRoutes(RouteCollection routes, IConfigurationRepository configuration, IUserRepository userRepository)
         {
+            routes.MapHttpRoute(
+                name: "API Default",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
             //TODO fix home routing
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 

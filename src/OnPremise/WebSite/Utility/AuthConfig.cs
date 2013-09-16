@@ -103,6 +103,14 @@ namespace Thinktecture.IdentityServer.Web.Utility
                         OAuthWebSecurity.RegisterYahooClient(identityProvider.OAuth2ProviderType.ToString());
                     }
                     break;
+                case OAuth2ProviderTypes.Thinktecture:
+                    if (!OAuthWebSecurity.TryGetOAuthClientData(identityProvider.OAuth2ProviderType.ToString(), out client))
+                    {
+                        var newClient = new ThinktectureClient(identityProvider.ClientID, identityProvider.ClientSecret, identityProvider.Scope, "bccidentityprovideropensource.local:44300");
+                        OAuthWebSecurity.RegisterClient(newClient, identityProvider.OAuth2ProviderType.ToString(), null);
+                        //OAuthWebSecurity.RegisterMicrosoftClient(identityProvider.ClientID, identityProvider.ClientSecret, identityProvider.ProviderType.ToString());
+                    }
+                    break;
             }
         }
 

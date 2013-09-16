@@ -46,10 +46,8 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         public IIdentityProviderRepository IdentityProviderRepository { get; set; }
 
         [Import]
-
         public IUserManagementRepository UserManagementRepository { get; set; }
-
-
+        
         public HrdController()
         {
             Container.Current.SatisfyImportsOnce(this);

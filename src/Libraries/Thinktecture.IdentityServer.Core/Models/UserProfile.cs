@@ -10,13 +10,15 @@ namespace Thinktecture.IdentityServer.Models
 {
     public class UserProfile : IValidatableObject
     {
-
+        [Claim]
         public int UserId { get; set; }
 
         [Mapper("emailaddress1")]
         [Required, RegularExpression(@"[A-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-z0-9](?:[A-z0-9-]*[A-z0-9])?\.)+[A-z0-9](?:[A-z0-9-]*[A-z0-9])?",
             @ErrorMessage = "Email adres is niet geldig.")
         ]
+
+        [Claim]
         public string Email { get; set; }
         
         [RegularExpression(@"[A-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-z0-9](?:[A-z0-9-]*[A-z0-9])?\.)+[A-z0-9](?:[A-z0-9-]*[A-z0-9])?",
@@ -26,19 +28,15 @@ namespace Thinktecture.IdentityServer.Models
 
         [Mapper("salutation")]
         [UIHint("Enum")]
-        [Claim]
-        public SalutationEnum Salutation { get; set; }
+         public SalutationEnum Salutation { get; set; }
 
         [Mapper("firstname")]
-        [Claim]
-        public string FirstName { get; set; }
+         public string FirstName { get; set; }
 
         [Mapper("lastname")]
-        [Claim]
         public string LastName { get; set; }
 
         [Mapper("middlename")]
-        [Claim]
         public string MiddleName { get; set; }
 
         /// <summary>
@@ -46,43 +44,34 @@ namespace Thinktecture.IdentityServer.Models
         /// </summary>
         [Mapper("address2_country")]
         [UIHint("Enum")]
-        [Claim]
         public CountryEnum Country { get; set; }
 
         [Mapper("address2_postalcode")]
-        [Claim]
         public string PostCode { get; set; }
 
         [RegularExpression(@"^([0-9]*)$")]
         [Mapper("address2_line2")]
-        [Claim]
         public int? HouseNumber { get; set; }
 
         [Mapper("address2_line3")]
-        [Claim]
         public string HouseNumberExtension { get; set; }
 
         [Mapper("address2_line1")]
-        [Claim]
         public string Street { get; set; }
 
         [Mapper("address2_city")]
-        [Claim]
-        public string City { get; set; }
+         public string City { get; set; }
 
         [MaxLength(13)]
         [Mapper("mobilephone")]
-        [Claim]// mobile
         public string PhoneMobile { get; set; }
 
         [MaxLength(13)]
         [Mapper("telephone1")]
-        [Claim]// werk
         public string PhoneWork { get; set; }
 
         [MaxLength(13)]
         [Mapper("telephone2")]
-        [Claim]// home
         public string Phone { get; set; }
 
         public bool IsDirty { get; set; }
@@ -92,6 +81,7 @@ namespace Thinktecture.IdentityServer.Models
         public bool ChangeEmail { get; set; }
         public bool ChangePassword { get; set; }
 
+        [Claim]
         public string ExternalUniqueKey { get; set; }
 
         public string Password { get; set; }

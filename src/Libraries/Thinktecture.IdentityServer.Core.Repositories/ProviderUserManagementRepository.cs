@@ -40,7 +40,7 @@ namespace Thinktecture.IdentityServer.Repositories
             {
                 var confirmationToken = WebSecurity.CreateUserAndAccount(email, password,
 
-                     new { Email = email, IsDirty = true, IsVerified = false }, true);
+                     new { Email = email, IsDirty = true, IsVerified = false, ExternalUniqueKey = Guid.NewGuid().ToString()}, true);
                 SendConfirmationMail(email, confirmationToken);
             }
             else

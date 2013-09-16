@@ -14,7 +14,7 @@ namespace Thinktecture.IdentityServer.Protocols.WSFederation
         public HrdViewModel(System.IdentityModel.Services.SignInRequestMessage message, IEnumerable<Models.IdentityProvider> idps)
         {
             this.OriginalSigninUrl = message.WriteQueryString();
-            this.Providers = idps.Select(x => new HRDIdentityProvider { DisplayName = x.DisplayName, ID = x.Name }).ToArray();
+            this.Providers = idps.Select(x => new HRDIdentityProvider { DisplayName = x.DisplayName, ID = x.Name}).ToArray();
         }
 
         public IEnumerable<HRDIdentityProvider> Providers { get; set; }

@@ -13,5 +13,6 @@ namespace Thinktecture.IdentityServer.Models
         LinkedIn = 4,
         Twitter = 5,
         Yahoo = 6,
+        Thinktecture = 7,
     }
 }
