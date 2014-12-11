@@ -128,11 +128,13 @@
     <Compile Include="AdfsIntegration\AdfsBridge.cs" />
     <Compile Include="OAuth2\AuthorizeRequest.cs" />
     <Compile Include="OAuth2\ClientValidator.cs" />
+    <Compile Include="OAuth2\Endpoints\OAuth2UserController.cs" />
     <Compile Include="OAuth2\IdentityProviders\ThinktectureClient.cs" />
     <Compile Include="OAuth2\IdentityProviders\ExtendedMicrosoftClient.cs" />
     <Compile Include="OAuth2\Endpoints\OAuth2AuthorizeController.cs" />
     <Compile Include="OAuth2\Endpoints\OAuth2ConsentViewModel.cs" />
     <Compile Include="OAuth2\TokenRequestValidationException.cs" />
+    <Compile Include="OAuth2\UserRequest.cs" />
     <Compile Include="OpenIdConnect\AccessToken.cs" />
     <Compile Include="OpenIdConnect\Endpoints\OidcAuthorizeController.cs" />
     <Compile Include="OpenIdConnect\Endpoints\OidcAuthorizeControllerBase.cs" />

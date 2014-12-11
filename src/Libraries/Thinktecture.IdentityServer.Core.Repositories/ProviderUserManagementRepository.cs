@@ -31,7 +31,7 @@ namespace Thinktecture.IdentityServer.Repositories
         /// </summary>
         /// <param name="email">email is the username</param>
         /// <param name="password">password of the account</param>
-        public void CreateUser(string email, string password)
+        public void CreateUser(string email, string password, string externalUniqueKey = null)
         {
             if (Regex.IsMatch(email,
             @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
@@ -40,7 +40,7 @@ namespace Thinktecture.IdentityServer.Repositories
             {
                 var confirmationToken = WebSecurity.CreateUserAndAccount(email, password,
 
-                     new { Email = email, IsDirty = true, IsVerified = false, ExternalUniqueKey = Guid.NewGuid().ToString()}, true);
+                     new { Email = email, IsDirty = true, IsVerified = false, ExternalUniqueKey = externalUniqueKey ?? Guid.NewGuid().ToString()}, true);
                 SendConfirmationMail(email, confirmationToken);
             }
             else

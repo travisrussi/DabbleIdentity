@@ -4,7 +4,7 @@ namespace Thinktecture.IdentityServer.Repositories
 {
     public interface IUserManagementRepository
     {
-        void CreateUser(string userName, string password);
+        void CreateUser(string userName, string password, string externalUniqueKey = null);
         void DeleteUser(string userName);
         
         IEnumerable<string> GetUsers(int start, int count, out int totalCount);
