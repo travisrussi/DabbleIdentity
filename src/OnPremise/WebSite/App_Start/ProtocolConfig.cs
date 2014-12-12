@@ -83,6 +83,14 @@ namespace Thinktecture.IdentityServer.Web
                     constraints: null,
                     handler: new AuthenticationHandler(CreateClientAuthConfig(configuration), httpConfiguration)
                 );
+
+                routes.MapHttpRoute(
+                    name: "oauth2user",
+                    routeTemplate: Endpoints.Paths.OAuth2User,
+                    defaults: new { controller = "OAuth2User" },
+                    constraints: null,
+                    handler: new AuthenticationHandler(CreateClientAuthConfig(configuration), httpConfiguration)
+                );
             }
 
             // open id connect

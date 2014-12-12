@@ -7,266 +7,176 @@
 
 
 <div class="span10 offset1 middle-aligned">
-		<div class="span12">
-                   @using (Html.BeginForm("myprofile", "account", FormMethod.Post, new { @class = "well primary hinted validate" }))
-                   {
-		            @Html.AntiForgeryToken()
+    <div class="span12">
+        @using (Html.BeginForm("myprofile", "account", FormMethod.Post, new { @class = "well primary hinted validate" }))
+        {
+            @Html.AntiForgeryToken()
             @Html.ValidationSummary("Saving your profile failed. Please correct the errors and try again.", new { @class = "alert alert-error" })
 
-                       if (ViewBag.ShowSucces != null && ViewBag.ShowSucces)
-                       {
-                         <div class="alert alert-success">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                             @if( ViewBag.Message != null)
-                             {
-                               <div> @ViewBag.Message</div> 
-                             }
-                             else
-                             {
-                                 <div>Uw gegevens zijn verwerkt.</div>
-                             }
-                        </div>
-                       }
-                       else if (ViewBag.ShowSucces != null && !ViewBag.ShowSucces && ViewBag.Message != null)
-                       {
-                          <div class="alert alert-error">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            @ViewBag.Message
-                         </div>
-                       }
+            if (ViewBag.ShowSucces != null && ViewBag.ShowSucces)
+            {
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    @if (ViewBag.Message != null)
+                    {
+                        <div> @ViewBag.Message</div>
+                    }
+                    else
+                    {
+                        <div>Profile successfully saved.</div>
+                    }
+                </div>
+            }
+            else if (ViewBag.ShowSucces != null && !ViewBag.ShowSucces && ViewBag.Message != null)
+            {
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    @ViewBag.Message
+                </div>
+            }
             @Html.HiddenFor(m => m.UserId);
 
-				<div class="row-fluid">
-					<div class="span4">
-						<div class="controls-row">
-							<label class="control-label">E-mail address</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-envelope"></i></span>
-                                 @Html.TextBoxFor(m => m.Email, new { @required = "", @readonly = "true"})							</div>
-						</div>
-						<div class="controls-row">
-							<label class="control-label">Gender</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-gender"></i></span>
-                                @Html.EditorFor(m => m.Salutation, "Enum")
-							</div>
-						</div>
-
-						<div class="controls-row">
-							<label class="control-label">Firstname</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-user"></i></span>
-                                 @Html.TextBoxFor(m => m.FirstName, new { required = "", maxlength = "50", data_hint = "Maximum<br/>50 characters" })
-							</div>
-						</div>
-
-						<div class="controls-row">
-							<label class="control-label">Lastname</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-user"></i></span>
-                                 @Html.TextBoxFor(m => m.LastName, new { required = "", maxlength = "50", data_hint = "Maximum<br/>50 characters" })
-							</div>
-						</div>
-                        <div class="controls-row">
-                            <label class="checkbox inline">
-                                @Html.CheckBoxFor(m => m.ChangeEmail, new {  @id="email-change", @class="novalidate"})
-                                <span class="nowrap">Change E-mail address</span>
-                            </label>
+            <div class="row-fluid">
+                <div class="span4">
+                    <div class="controls-row">
+                        <label class="control-label">E-mail Address</label>
+                        <div class="input-prepend">
+                            <span class="add-on left"><i class="icon-envelope"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @required = "", @readonly = "true" })
                         </div>
-                       <div class="controls-row emailchangetoggle hidden">
-							<label class="control-label">New E-mail address</label>
-							<div class="input-prepend">                                                   
+                    </div>
+                    
+                    <div class="controls-row">
+                        <label class="checkbox inline">
+                            @Html.CheckBoxFor(m => m.ChangeEmail, new { @id = "email-change", @class = "novalidate" })
+                            <span class="nowrap">Change E-mail address</span>
+                        </label>
+                    </div>
+                    <div class="controls-row emailchangetoggle hidden">
+                        <label class="control-label">New E-mail address</label>
+                        <div class="input-prepend">
 
-								<span class="add-on left"><i class="icon-envelope"></i></span>
-                                 @Html.TextBoxFor(m => m.NewEmailAdress, new { @type = "email",autocomplete = "off" , required = "", pattern = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$", @placeholder = "Username", @title = "", @id = "UserName", data_hint = "Valid E-mail address<br/>A confimration email<br/>wil be send to the old <br/>and new E-mail address." })
-							</div>
-						</div>
-                        <div class="controls-row">
-                            <label class="checkbox inline">
-                                  @Html.CheckBoxFor(m => m.ChangePassword, new {  id="password-change", @class="novalidate"})    
-                                @if(ViewBag.LocalAccount)
-                                {
+                            <span class="add-on left"><i class="icon-envelope"></i></span>
+                            @Html.TextBoxFor(m => m.NewEmailAdress, new { @type = "email", autocomplete = "off", required = "", pattern = "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$", @placeholder = "Username", @title = "", @id = "UserName", data_hint = "Valid E-mail address<br/>A confimration email<br/>wil be send to the old <br/>and new E-mail address." })
+                        </div>
+                    </div>
+                    <div class="controls-row">
+                        <label class="checkbox inline">
+                            @Html.CheckBoxFor(m => m.ChangePassword, new { id = "password-change", @class = "novalidate" })
+                            @if (ViewBag.LocalAccount)
+                            {
                                 <span class="nowrap">Change Password</span>
-                                }
-                                else
-                                {                           
-                                <span class="nowrap">Create Local Account</span>
-                                }
-                            </label>
-                        </div>
-                               @if(ViewBag.LocalAccount)
-                                {
-                       <div class="controls-row passwordchangetoggle hidden">
-							<label class="control-label">Current Password</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-lock"></i></span>                             
-                                @Html.PasswordFor(m => m.CurrentPassword, new { @placeholder = "Password"})
-								@*<input id="password1" type="password" required pattern="^.{5}.+$" title="" placeholder="Password" data-hint="Verplicht veld<br/>Minimaal 6 tekens">*@
-								<span class="add-on right"></span>
-							</div>
-						</div>
-                        }
-						<div class="controls-row passwordchangetoggle hidden">
-							<label class="control-label">New Password</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-lock"></i></span>                             
-                                @Html.PasswordFor(m => m.Password, new { @placeholder = "Password", pattern = "^.{5}.+$", data_hint = "Minimal 6 characters", @id = "password1" })
-								@*<input id="password1" type="password" required pattern="^.{5}.+$" title="" placeholder="Password" data-hint="Verplicht veld<br/>Minimaal 6 tekens">*@
-								<span class="add-on right"></span>
-							</div>
-						</div>
-						<div class="controls-row passwordchangetoggle hidden">
-							<label class="control-label">Repeat Password</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-lock"></i></span>
-                                @Html.PasswordFor(m => m.Password2, new { @class = "h5-matchingpassword", placeholder = "Password", data_hint = "Minimal 6 characters<br/>Same as new password" })
-								@*<input type="password" required class="h5-matchingpassword" placeholder="Password" data-hint="Verplicht veld<br/>Minimaal 6 tekens<br/>Gelijk aan wachtwoord">*@
-								<span class="add-on right"></span>
-							</div>
-						</div>
-                      @*<div class="controls-row">
-							<label class="control-label">For Dev External ID</label>
-							<div class="input-prepend">
-								<span class="add-on left"><i class="icon-warning-sign"></i></span>
-                                 @Html.TextBoxFor(m => m.ExternalUniqueKey, new { maxlength = "50", @readonly = "true"})
-							</div>
-						</div>*@
-
-					</div>
-					<div class="span4">
-						<div class="controls-row-fluid">
-							<div class="row-fluid">
-								<div class="span4">
-									<label class="control-label">Zipcode</label>
-									<div class="input-prepend full-width">
-										<span class="add-on left"><i class="icon-region"></i></span>
-                                         @Html.TextBoxFor(m => m.PostCode, new { @id = "postalcode", @required = "",  data_hint = "Required Field,<br/>Valid zipcode" })
-										
-									</div>
-								</div>
-								<div class="span4">
-									<label class="control-label">Housenumber</label>
-									<div class="input-prepend full-width">                                      
-										<span class="add-on left"><i class="icon-hex"></i></span>
-                                          @Html.TextBoxFor(m => m.HouseNumber, new { required = "", pattern = "[1-9][0-9]*", placeholder = "81", data_hint = "Required Field,<br/>Valid housenumber" })
-										@*<input type="text" id="streetnumber" required pattern="[1-9][0-9]*" title="" placeholder="81" data-hint="Verplicht veld,<br/>Valide huisnummer">*@
-									</div>
-								</div>
-								<div class="span4">
-									<label class="control-label">Additions</label>
-									<div class="input-prepend full-width">
-										<span class="add-on left"><i class="icon-extra"></i></span>
-                                        @Html.TextBoxFor(m => m.HouseNumberExtension, new { maxlength = "9", id = "streetnumber_addition"})
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="controls-row">
-							<label class="control-label">Streetname</label>
-							<div class="input-prepend full-width">
-								<span class="add-on left"><i class="icon-home"></i></span>
-                                @Html.TextBoxFor(m => m.Street)
-							</div>
-						</div>
-
-						<div class="controls-row">
-							<label class="control-label">City</label>
-							<div class="input-prepend full-width">
-								<span class="add-on left"><i class="icon-office"></i></span>
-                                 @Html.TextBoxFor(m => m.City)
-							</div>
-						</div>
-
-						<div class="controls-row">
-							<label class="control-label">Country</label>
-							<div class="input-prepend full-width">
-								<span class="add-on left"><i class="icon-globe"></i></span>
-                                @Html.EditorFor(m => m.Country, "Enum")
-							</div>
-						</div>
-
-						<div class="controls-row">
-							<label class="control-label">Phonenumber (mobile)</label>
-							<div class="input-prepend full-width">
-								<span class="add-on left"><i class="icon-phone"></i></span>
-                                @Html.TextBoxFor(m => m.PhoneMobile, new { type = "tel", maxlength = "13", data_hint = "Maximum Length<br/>13 characters" })
-								@*<input type="tel" placeholder="" maxlength="13" data-hint="Maximaal<br/>13 tekens">*@
-							</div>
-						</div>
-						<div class="controls-row">
-							<label class="control-label">Phonenumber (home)</label>
-							<div class="input-prepend full-width">
-								<span class="add-on left"><i class="icon-phone"></i></span>
-                                @Html.TextBoxFor(m => m.Phone, new { type = "tel", maxlength = "13", data_hint = "Maximum Length<br/>13 characters" })
-								@*<input type="tel" placeholder="" maxlength="13" data-hint="Maximaal<br/>13 tekens">*@
-							</div>
-						</div>
-						<div class="controls-row">
-							<label class="control-label">Phonenumber (work)</label>
-							<div class="input-prepend full-width">
-								<span class="add-on left"><i class="icon-phone"></i></span>
-                                @Html.TextBoxFor(m => m.PhoneWork, new { type = "tel", maxlength = "13", data_hint = "Maximum Length<br/>13 characters" })
-								@*<input type="tel" placeholder="" maxlength="13" data-hint="Maximaal<br/>13 tekens">*@
-							</div>
-						</div>
-
-
-					</div>
-
-					<div class="span4">
-                        <div class="controls-row">
-                            <label class="control-label">External Identity Providers</label>
-                            @{
-                                if(Model.OAuthMemberships != null)
-                                {
-                                   foreach (var provider in Model.OAuthMemberships)
-                                   {
-                                       string providerImageSrc = "";
-                                   
-                                       switch (provider.Provider)
-                                       {
-                                           case "google":
-                                               providerImageSrc = "/Content/openId/google.gif";
-                                               break;
-                                           case "microsoft":
-                                               providerImageSrc = "/Content/openId/liveid.gif";
-                                               break;
-                                           case "facebook":
-                                               providerImageSrc = "/Content/openId/facebook.gif";
-                                               break;
-                                       }
-                                    //Pehaps not the safest way should make this into a post with antiforgytoken for lator fix
-                                    
-                                       <div class="input-prepend full-width">
-                                       @if(ViewBag.LocalAccount)
-                                       {
-                                            <a class="add-on right inner" href="@Url.Action("Disassociate", "Account", new { provider = provider.Provider, providerUserId = provider.ProviderUserId })"><i class="icon-remove"></i></a>
-                                        }
-                                        <img src="@providerImageSrc" class="rounded-image" />
-                                       </div>
-                                        
-                                   } 
-                               }
                             }
+                            else
+                            {
+                                <span class="nowrap">Create Local Account</span>
+                            }
+                        </label>
+                    </div>
+                    @if (ViewBag.LocalAccount)
+                    {
+                        <div class="controls-row passwordchangetoggle hidden">
+                            <label class="control-label">Current Password</label>
+                            <div class="input-prepend">
+                                <span class="add-on left"><i class="icon-lock"></i></span>
+                                @Html.PasswordFor(m => m.CurrentPassword, new { @placeholder = "Password" })
+                                @*<input id="password1" type="password" required pattern="^.{5}.+$" title="" placeholder="Password" data-hint="Verplicht veld<br/>Minimaal 6 tekens">*@
+                                <span class="add-on right"></span>
+                            </div>
                         </div>
-                        <div class="controls-row">
-                          @Html.ActionLink("Add Identity Provider", "AddExternalIdentityProvider", null, new { @class = "btn btn-primary", area = "" })
+                    }
+                    <div class="controls-row passwordchangetoggle hidden">
+                        <label class="control-label">New Password</label>
+                        <div class="input-prepend">
+                            <span class="add-on left"><i class="icon-lock"></i></span>
+                            @Html.PasswordFor(m => m.Password, new { @placeholder = "Password", pattern = "^.{5}.+$", data_hint = "Minimal 6 characters", @id = "password1" })
+                            @*<input id="password1" type="password" required pattern="^.{5}.+$" title="" placeholder="Password" data-hint="Verplicht veld<br/>Minimaal 6 tekens">*@
+                            <span class="add-on right"></span>
                         </div>
+                    </div>
+                    <div class="controls-row passwordchangetoggle hidden">
+                        <label class="control-label">Repeat Password</label>
+                        <div class="input-prepend">
+                            <span class="add-on left"><i class="icon-lock"></i></span>
+                            @Html.PasswordFor(m => m.Password2, new { @class = "h5-matchingpassword", placeholder = "Password", data_hint = "Minimal 6 characters<br/>Same as new password" })
+                            @*<input type="password" required class="h5-matchingpassword" placeholder="Password" data-hint="Verplicht veld<br/>Minimaal 6 tekens<br/>Gelijk aan wachtwoord">*@
+                            <span class="add-on right"></span>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="span4">
+
+                    <div class="controls-row">
+                        <label class="control-label">Firstname</label>
+                        <div class="input-prepend">
+                            <span class="add-on left"><i class="icon-user"></i></span>
+                            @Html.TextBoxFor(m => m.FirstName, new { required = "", maxlength = "50", data_hint = "Maximum<br/>50 characters" })
+                        </div>
+                    </div>
+
+                    <div class="controls-row">
+                        <label class="control-label">Lastname</label>
+                        <div class="input-prepend">
+                            <span class="add-on left"><i class="icon-user"></i></span>
+                            @Html.TextBoxFor(m => m.LastName, new { required = "", maxlength = "50", data_hint = "Maximum<br/>50 characters" })
+                        </div>
+                    </div>
 
 
+                </div>
 
-	                    
-						<div id="profile-submit">
-							<div class="clearfix breath-v">
-								<button type="submit" class="pull-right submitbutton save">Save</button>
-							</div>
-						</div>
+                <div class="span4">
+                    <div class="controls-row">
+                        <label class="control-label">External Identity Providers</label>
+                        @if (Model.OAuthMemberships != null)
+                        {
+                            foreach (var provider in Model.OAuthMemberships)
+                            {
+                                string providerImageSrc = "";
+
+                                switch (provider.Provider)
+                                {
+                                    case "google":
+                                        providerImageSrc = "/Content/openId/google.gif";
+                                        break;
+                                    case "microsoft":
+                                        providerImageSrc = "/Content/openId/liveid.gif";
+                                        break;
+                                    case "facebook":
+                                        providerImageSrc = "/Content/openId/facebook.gif";
+                                        break;
+                                }
+                                //Pehaps not the safest way should make this into a post with antiforgytoken for lator fix
+
+                                <div class="input-prepend full-width">
+                                    @if (ViewBag.LocalAccount)
+                                    {
+                                        <a class="add-on right inner" href="@Url.Action("Disassociate", "Account", new { provider = provider.Provider, providerUserId = provider.ProviderUserId })"><i class="icon-remove"></i></a>
+                                    }
+                                    <img src="@providerImageSrc" class="rounded-image" />
+                                </div>
+
+                            }
+                        }
+                    </div>
+                    <div class="controls-row">
+                        @Html.ActionLink("Add Identity Provider", "AddExternalIdentityProvider", null, new { @class = "btn btn-primary", area = "" })
+                    </div>
+                </div>
+
+                <div class="span12">
+
+                    <div id="profile-submit">
+                        <div class="clearfix breath-v">
+                            <button type="submit" class="submitbutton save">Save Profile</button>
+                        </div>
+                    </div>
 
 
-					</div>
-				</div>
-                   }
-	</div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 

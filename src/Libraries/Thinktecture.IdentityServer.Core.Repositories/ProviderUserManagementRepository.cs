@@ -31,7 +31,7 @@ namespace Thinktecture.IdentityServer.Repositories
         /// </summary>
         /// <param name="email">email is the username</param>
         /// <param name="password">password of the account</param>
-        public void CreateUser(string email, string password, string externalUniqueKey = null)
+        public void CreateUser(string email, string password, string externalUniqueKey = null, string firstName = null, string lastName = null)
         {
             if (Regex.IsMatch(email,
             @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
@@ -40,14 +40,15 @@ namespace Thinktecture.IdentityServer.Repositories
             {
                 var confirmationToken = WebSecurity.CreateUserAndAccount(email, password,
 
-                     new { Email = email, IsDirty = true, IsVerified = false, ExternalUniqueKey = externalUniqueKey ?? Guid.NewGuid().ToString()}, true);
-                SendConfirmationMail(email, confirmationToken);
+                     new { Email = email, IsDirty = true, IsVerified = false, ExternalUniqueKey = externalUniqueKey, FirstName = firstName, LastName = lastName }); //, true);
+                //SendConfirmationMail(email, confirmationToken);
             }
             else
             {
                 throw new MembershipCreateUserException(MembershipCreateStatus.InvalidEmail);
             }
         }
+        
         /// <summary>
         /// Url helper for generating MVC urls
         /// </summary>
@@ -660,6 +661,39 @@ namespace Thinktecture.IdentityServer.Repositories
                 }
             }
 
+        }
+
+        public bool ChangePassword(string email, string newPassword)
+        {
+            //change password only when filled
+
+            bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(email));
+            if (hasLocalAccount)
+            {
+                string resetToken = "";
+
+                try
+                {
+                    resetToken = WebSecurity.GeneratePasswordResetToken(email);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("No account"))
+                    {
+                        string password = System.Web.Security.Membership.GeneratePassword(6, 0);
+                        WebSecurity.CreateAccount(email, password);
+                        resetToken = WebSecurity.GeneratePasswordResetToken(email);
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+                return WebSecurity.ResetPassword(resetToken, newPassword);
+            }
+
+            logger.Log(LogLevel.Error, "An error occured while trying to change a password");
+            return false;
         }
 
         /// <summary>

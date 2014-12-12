@@ -10,25 +10,28 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
     [JsonObject]
     public class UserRequest
     {
-        [JsonProperty(PropertyName = "action")]
-        public string Action { get; set; }
-
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
-        [JsonProperty(PropertyName = "external_key")]
-        public string ExternalUniqueKey { get; set; }
-
+        [JsonProperty(PropertyName = "action")]
+        public string Action { get; set; }
+        
         [JsonProperty(PropertyName = "password")]
         public string Password { get; set; }
+
+        [JsonProperty(PropertyName = "passwordnew")]
+        public string PasswordNew { get; set; }
 
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
 
-        [JsonProperty(PropertyName = "first_name")]
+        [JsonProperty(PropertyName = "emailnew")]
+        public string EmailNew { get; set; }
+
+        [JsonProperty(PropertyName = "firstname")]
         public string FirstName { get; set; }
 
-        [JsonProperty(PropertyName = "last_name")]
+        [JsonProperty(PropertyName = "lastname")]
         public string LastName { get; set; }
 
         [JsonProperty(PropertyName = "code")]

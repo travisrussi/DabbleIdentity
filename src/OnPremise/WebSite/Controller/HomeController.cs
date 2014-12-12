@@ -118,6 +118,7 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                 {
                     list.Add("OAuth2 Token", endpoints.OAuth2Token.AbsoluteUri);
                 }
+                list.Add("OAuth2 User", endpoints.OAuth2User.AbsoluteUri);
             }
 
             // adfs integration

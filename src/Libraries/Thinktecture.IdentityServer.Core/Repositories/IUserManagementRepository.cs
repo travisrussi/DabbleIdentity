@@ -4,7 +4,7 @@ namespace Thinktecture.IdentityServer.Repositories
 {
     public interface IUserManagementRepository
     {
-        void CreateUser(string userName, string password, string externalUniqueKey = null);
+        void CreateUser(string userName, string password, string externalUniqueKey = null, string firstName = null, string lastName = null);
         void DeleteUser(string userName);
         
         IEnumerable<string> GetUsers(int start, int count, out int totalCount);
@@ -41,6 +41,7 @@ namespace Thinktecture.IdentityServer.Repositories
         void SendEmailChangeConfirmationMail(string newEmail, string oldEmail);
 
         string GetNewEmailFromUser(string email);
+        bool ChangePassword(string email, string newPassword);
         bool ChangePassword(string email, string currentPassword, string newPassword);
         string GetPasswordHash(int userid);
         string GetPasswordSalt(int userid);

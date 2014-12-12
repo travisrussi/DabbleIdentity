@@ -33,6 +33,7 @@ namespace Thinktecture.IdentityServer
         public Uri OAuth2Token { get; set; }
         public Uri OAuth2Callback { get; set; }
         public Uri OAuth2Authorize { get; set; }
+        public Uri OAuth2User { get; set; }
         public Uri JSNotify { get; set; }
 
         public static class Paths
@@ -48,6 +49,7 @@ namespace Thinktecture.IdentityServer
             public const string Wrap = "issue/wrap";
             public const string OAuth2Token = "issue/oauth2/token";
             public const string OAuth2Authorize = "issue/oauth2/authorize";
+            public const string OAuth2User = "issue/oauth2/user";
             public const string AdfsIntegration = "issue/adfs";
             public const string JSNotify = "issue/jsnotify";
             public const string Mex = "mex";
@@ -133,6 +135,12 @@ namespace Thinktecture.IdentityServer
             builder.Scheme = Uri.UriSchemeHttps;
             builder.Port = httpsPort;
             ep.OAuth2Authorize = builder.Uri;
+
+            var oauth2user = new Uri(baseUriString + Paths.OAuth2User);
+            builder = new UriBuilder(oauth2user);
+            builder.Scheme = Uri.UriSchemeHttps;
+            builder.Port = httpsPort;
+            ep.OAuth2User = builder.Uri;
 
             var oidcAuthorize = new Uri(baseUriString + Paths.OidcAuthorize);
             builder = new UriBuilder(oidcAuthorize);

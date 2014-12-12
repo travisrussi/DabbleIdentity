@@ -24,7 +24,7 @@ namespace Thinktecture.IdentityServer.Models
         [RegularExpression(@"[A-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-z0-9](?:[A-z0-9-]*[A-z0-9])?\.)+[A-z0-9](?:[A-z0-9-]*[A-z0-9])?",
             @ErrorMessage = "Email adres is niet geldig.")
         ]
-        public string NewEmailAdress { get; set; }
+        public string NewEmail { get; set; }
 
         [Mapper("salutation")]
         [UIHint("Enum")]
@@ -91,6 +91,8 @@ namespace Thinktecture.IdentityServer.Models
 
         public string CurrentPassword { get; set; }
         public string PasswordSecurityToken { get; set; }
+
+        public string TemporarilyValidGeneratedToken { get; set; }
 
         public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<OAuthMembership> OAuthMemberships { get; set; }        

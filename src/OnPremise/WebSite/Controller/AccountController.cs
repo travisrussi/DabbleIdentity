@@ -364,17 +364,17 @@ namespace Thinktecture.IdentityServer.Web.Controllers
                     }
                     if (model.ChangeEmail)
                     {
-                        if (!string.IsNullOrEmpty(model.NewEmailAdress))
+                        if (!string.IsNullOrEmpty(model.NewEmail))
                         {
-                            if (WebSecurity.UserExists(model.NewEmailAdress))
+                            if (WebSecurity.UserExists(model.NewEmail))
                             {
                                 ViewBag.ShowSucces = false;
-                                ViewBag.Message = "Er bestaat al een gebruiker met dit email adress: " + model.NewEmailAdress;
+                                ViewBag.Message = "Er bestaat al een gebruiker met dit email adress: " + model.NewEmail;
                             }
                             else
                             {
                                 UserManagementRepository.SendEmailChangeRequestEmail(model.Email);
-                                UserManagementRepository.SendEmailChangeConfirmationMail(model.NewEmailAdress, model.Email);
+                                UserManagementRepository.SendEmailChangeConfirmationMail(model.NewEmail, model.Email);
                             }
                         }
                     }

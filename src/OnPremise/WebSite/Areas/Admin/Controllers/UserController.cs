@@ -155,14 +155,14 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
         }
 
         [Authorize]
-        public ActionResult Profile(string id)
+        public ActionResult Profile(string username)
         {
             try
             {
                 //not needed authorize 
                 if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    var profile = UserManagementRepository.GetByUsername(id);
+                    var profile = UserManagementRepository.GetByUsername(username);
                     return View(profile);
                 }
             }
@@ -171,6 +171,61 @@ namespace Thinktecture.IdentityServer.Web.Areas.Admin.Controllers
                 //todo: logging.
                 logger.LogException(LogLevel.Error, "An error occured during opening the myprofile page: ", ex);
                 System.Diagnostics.Debug.WriteLine("An error occured during opening the myprofile page : {0}", ex.Message);
+            }
+
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.Unauthorized);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public ActionResult ChangePassword(string id)
+        {
+            try
+            {
+                //not needed authorize 
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var profile = UserManagementRepository.GetByUsername(id);
+                    var userPasswordModel = new UserPasswordModel()
+                    {
+                        Username = profile.Email
+                    };
+                    return View(userPasswordModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                //todo: logging.
+                logger.LogException(LogLevel.Error, "An error occured during opening the ChangePassword page: ", ex);
+                System.Diagnostics.Debug.WriteLine("An error occured during opening the ChangePassword page : {0}", ex.Message);
+            }
+
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.Unauthorized);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult ChangePassword(UserPasswordModel userPasswordModel)
+        {
+            try
+            {
+                //not needed authorize 
+                if (HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var profile = UserManagementRepository.GetByUsername(userPasswordModel.Username);
+                    if (profile != null && !string.IsNullOrEmpty(userPasswordModel.Password))
+                    {
+                        this.UserManagementRepository.ChangePassword(userPasswordModel.Username, userPasswordModel.Password);
+                        return RedirectToAction("Profile", new { userPasswordModel.Username });
+                    }
+                    return View(userPasswordModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                //todo: logging.
+                logger.LogException(LogLevel.Error, "An error occured during opening the ChangePassword page: ", ex);
+                System.Diagnostics.Debug.WriteLine("An error occured during opening the ChangePassword page : {0}", ex.Message);
             }
 
             return new HttpStatusCodeResult(System.Net.HttpStatusCode.Unauthorized);
