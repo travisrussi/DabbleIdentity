@@ -10,6 +10,7 @@ namespace Thinktecture.IdentityServer.Protocols.OAuth2
     [JsonObject]
     public class UserRequest
     {
+
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
