@@ -12,5 +12,3 @@ build/
 _ReSharper.*
 *.resharper
 PublishProfiles
-
-*.config
