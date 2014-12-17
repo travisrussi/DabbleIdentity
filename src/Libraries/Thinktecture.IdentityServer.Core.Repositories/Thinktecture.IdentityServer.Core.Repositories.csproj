@@ -315,9 +315,7 @@
       <LastGenOutput>Mappings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Migrations.SqlCe\Sql\201301011818314_InitialMigration.sql" />
     <Content Include="Migrations.SqlCe\Sql\201302041416106_RefreshToken.sql" />
