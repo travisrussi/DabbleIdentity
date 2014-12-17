@@ -129,6 +129,14 @@
     <Compile Include="Migrations.SqlCe\201308171332371_DisableSSL.Designer.cs">
       <DependentUpon>201308171332371_DisableSSL.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations.SqlServer\201412172228541_AddMembershipProvider.cs" />
+    <Compile Include="Migrations.SqlServer\201412172228541_AddMembershipProvider.Designer.cs">
+      <DependentUpon>201412172228541_AddMembershipProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations.SqlServer\201412172246367_AddScopeToIdentityProvider.cs" />
+    <Compile Include="Migrations.SqlServer\201412172246367_AddScopeToIdentityProvider.Designer.cs">
+      <DependentUpon>201412172246367_AddScopeToIdentityProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="OpenIdConnectClientsRepository.cs" />
     <Compile Include="EntityModel\CodeToken.cs" />
     <Compile Include="EntityModel\Configuration\AdfsIntegrationConfiguration.cs" />
@@ -285,6 +293,12 @@
     <EmbeddedResource Include="Migrations.SqlCe\201308171332371_DisableSSL.resx">
       <DependentUpon>201308171332371_DisableSSL.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations.SqlServer\201412172228541_AddMembershipProvider.resx">
+      <DependentUpon>201412172228541_AddMembershipProvider.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations.SqlServer\201412172246367_AddScopeToIdentityProvider.resx">
+      <DependentUpon>201412172246367_AddScopeToIdentityProvider.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\IdentityProviderRepository.fr.resx">
       <DependentUpon>IdentityProviderRepository.resx</DependentUpon>
     </EmbeddedResource>
@@ -301,7 +315,9 @@
       <LastGenOutput>Mappings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Migrations.SqlCe\Sql\201301011818314_InitialMigration.sql" />
     <Content Include="Migrations.SqlCe\Sql\201302041416106_RefreshToken.sql" />

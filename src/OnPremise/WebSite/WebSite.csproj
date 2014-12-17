@@ -1809,7 +1809,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>52151</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://identity.dabblelab.com/idsrv</IISUrl>
+          <IISUrl>http://identity.dabblelab.com</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

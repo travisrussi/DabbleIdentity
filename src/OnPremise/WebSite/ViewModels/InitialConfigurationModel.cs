@@ -29,7 +29,7 @@ namespace Thinktecture.IdentityServer.Web.ViewModels
         [Display(Name = "CreateDefaultAccounts", ResourceType = typeof(Resources.InitialConfigurationModel))]
         public bool CreateDefaultAccounts { get; set; }
 
-        [Display(Name = "UserName", ResourceType = typeof(Resources.InitialConfigurationModel))]
+        [Display(Name = "Email Address")]
         public string UserName { get; set; }
 
         [Display(Name = "Password", ResourceType = typeof(Resources.InitialConfigurationModel))]
