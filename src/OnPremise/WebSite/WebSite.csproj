@@ -1337,7 +1337,8 @@
     <Content Include="Content\themes\default\variables.less" />
     <Content Include="Areas\Admin\Views\OpenIdConnectClient\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\OpenIdConnectClient\Index.cshtml" />
-    <None Include="Properties\PublishProfiles\com.dabblelab.identity.prod.pubxml" />
+    <None Include="Properties\PublishProfiles\com.dabbleidentity.prod.web.pubxml" />
+    <None Include="Properties\PublishProfiles\com.dabbleidentity.staging.web.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
